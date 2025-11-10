@@ -10,7 +10,6 @@ export default async function Header() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  // console.log(session);
   return (
     <header
       className={cn(
@@ -29,7 +28,9 @@ export default async function Header() {
       </Link>
       <div className="flex gap-2 items-center">
         <ThemeToggle />
-        {!session && (
+        {session ? (
+          <UserAvatar />
+        ) : (
           <>
             <Button variant="secondary" className="cursor-pointer" asChild>
               <Link href="/login">Sign In</Link>
@@ -39,7 +40,6 @@ export default async function Header() {
             </Button>
           </>
         )}
-        {session && <UserAvatar />}
       </div>
     </header>
   );
