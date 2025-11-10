@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
         description,
         dueDate: dueDate ? new Date(dueDate) : null,
         priority,
-        userId: 'demo-user-id', // 在实际应用中，这里应该从session中获取
+        userId: 'demo-user-id', // TODO:在实际应用中，这里应该从session中获取
         categories: {
           create: categoryIds.map((categoryId: string) => ({
             category: {
@@ -58,49 +58,5 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating todo:', error);
     return NextResponse.json({ error: 'Failed to create todo' }, { status: 500 });
-  }
-}
-
-// 更新待办事项
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const { completed } = await request.json();
-    
-    const todo = await prisma.todo.update({
-      where: { id: params.id },
-      data: { completed },
-      include: {
-        categories: {
-          include: {
-            category: true,
-          },
-        },
-      },
-    });
-
-    return NextResponse.json(todo);
-  } catch (error) {
-    console.error('Error updating todo:', error);
-    return NextResponse.json({ error: 'Failed to update todo' }, { status: 500 });
-  }
-}
-
-// 删除待办事项
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    await prisma.todo.delete({
-      where: { id: params.id },
-    });
-
-    return NextResponse.json({ message: 'Todo deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting todo:', error);
-    return NextResponse.json({ error: 'Failed to delete todo' }, { status: 500 });
   }
 }
