@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  console.log(session);
+  
   if (!session?.user) return;
 
   try {

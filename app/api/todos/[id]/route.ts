@@ -6,12 +6,13 @@ const prisma = new PrismaClient();
 // 更新待办事项
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { completed } = await request.json();
     const todo = await prisma.todo.update({
-      where: { id: params.id },
+      where: { id },
       data: { completed },
       include: {
         categories: {
@@ -32,11 +33,12 @@ export async function PATCH(
 // 删除待办事项
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     await prisma.todo.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: 'Todo deleted successfully' });
