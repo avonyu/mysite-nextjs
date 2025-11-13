@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/app/generated/prisma/client';
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const prisma = new PrismaClient();
 
@@ -27,6 +29,12 @@ export async function GET() {
 
 // 创建新待办事项
 export async function POST(request: NextRequest) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  console.log(session);
+  if (!session?.user) return;
+
   try {
     const { title, description, dueDate, priority, categoryIds } = await request.json();
 
@@ -36,7 +44,7 @@ export async function POST(request: NextRequest) {
         description,
         dueDate: dueDate ? new Date(dueDate) : null,
         priority,
-        userId: 'demo-user-id', // TODO:在实际应用中，这里应该从session中获取
+        userId: session.user.id, // 从session中获取userId
         categories: {
           create: categoryIds.map((categoryId: string) => ({
             category: {

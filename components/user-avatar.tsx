@@ -16,6 +16,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { redirect } from "next/navigation";
 
 export default function UserAvatar() {
   const { data: session } = useSession();
@@ -37,7 +38,14 @@ export default function UserAvatar() {
           <p>{session.user.name}</p>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => signOut()}>登出</DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() => {
+            signOut();
+            redirect("/");
+          }}
+        >
+          登出
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
