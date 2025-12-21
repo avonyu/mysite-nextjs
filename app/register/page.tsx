@@ -43,10 +43,9 @@ export default function RegisterPage() {
   });
 
   async function onSubmit(values: RegisterData) {
-    console.log(values);
     try {
       const response = await axios.post(
-        `${process.env.BASE_URL}/api/v1/register`,
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/v1/register`,
         {
           username: values.username,
           password: values.password, // 使用明文密码，后端会处理加密
