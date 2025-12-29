@@ -44,13 +44,6 @@ export class TestService {
           createAt: 'desc',
         },
       });
-      const output = tests.map(test => ({
-        id: test.id,
-        content: test.content,
-        createAt: test.createAt,
-        updateAt: test.updateAt,
-        userId: test.userId
-      }))
 
       return tests.map(test => ({
         id: test.id,
