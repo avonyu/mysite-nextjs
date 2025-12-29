@@ -16,7 +16,6 @@ export interface TestResponse {
 // TODO: understand this⬇️
 export class TestService {
   static async createTest(input: TestInput): Promise<TestResponse> {
-    console.log(input)
     try {
       const test = await prisma.test.create({
         data: {

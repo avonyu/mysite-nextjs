@@ -1,17 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, Dispatch, SetStateAction } from "react";
 import { TestResponse } from "@/app/api/test/service";
+import { useCountStore } from "@/store";
 
 export function ShowAllTests({
+  tests,
+  setTests,
   className,
-  ...props
 }: {
+  tests: TestResponse[];
+  setTests: Dispatch<SetStateAction<TestResponse[]>>;
   className?: string;
-  [key: string]: any;
 }) {
-  const [tests, setTests] = useState<TestResponse[]>([]);
-
+  const increment = useCountStore((state) => state.increment);
+  const count = useCountStore((state) => state.count);
   useEffect(() => {
     // 获取测试数据的逻辑
     const fetchTests = async () => {
@@ -28,7 +31,8 @@ export function ShowAllTests({
   }, []);
 
   return (
-    <div className={className} {...props}>
+    <div className={className}>
+      <button onClick={() => increment(3)}>count: {count}</button>
       {tests.map((item) => (
         <div key={item.id}>{item.content}</div>
       ))}

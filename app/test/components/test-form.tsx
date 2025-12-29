@@ -1,5 +1,7 @@
 "use client";
 
+import { Dispatch, SetStateAction } from "react";
+import { TestResponse } from "@/app/api/test/service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,13 +30,53 @@ interface TestFormProps {
   ) => Promise<{ success: boolean; message: string }>;
 }
 
-export function TestForm({ onSubmit }: TestFormProps) {
+export function TestForm({
+  tests,
+  setTests,
+}: {
+  tests: TestResponse[];
+  setTests: Dispatch<SetStateAction<TestResponse[]>>;
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: "",
     },
   });
+
+  async function onSubmit(
+    value: {
+      content: string;
+    },
+    userId: string
+  ): Promise<{ success: boolean; message: string }> {
+    try {
+      // 使用相对URL，但在服务器环境中应该能正常工作
+      const response = await fetch(`/api/test`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: value.content,
+          userId: userId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to create test");
+      }
+      setTests([result.test, ...tests]);
+
+      return { success: true, message: "测试数据创建成功！" };
+    } catch (error) {
+      throw new Error(
+        error instanceof Error ? error.message : "创建测试数据失败"
+      );
+    }
+  }
 
   const { data: session } = useSession();
   if (!session?.user) return null;
