@@ -5,7 +5,7 @@ import { ShowAllTests } from "./components/show-all-tests";
 import { useState } from "react";
 import { TestResponse } from "@/app/api/test/service";
 
-export default function textPage() {
+export default function TextPage() {
   const [tests, setTests] = useState<TestResponse[]>([]);
 
   return (
