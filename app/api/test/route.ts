@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma"
 import { TestService } from "./service"
 
 export async function GET() {

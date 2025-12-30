@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/generated/prisma/client';
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma'
 
 // 获取所有待办事项
 export async function GET() {
