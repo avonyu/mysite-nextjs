@@ -24,7 +24,7 @@ export default async function Header() {
           "dark:text-cyan-400"
         )}
       >
-        Todo List
+        {"Avon's Page"}
       </Link>
       <div className="flex gap-2 items-center">
         <ThemeToggle />

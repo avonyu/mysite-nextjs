@@ -17,7 +17,7 @@ interface Todo {
 
 type Priority = "NORMAL" | "IMPORTANT";
 
-function TodoPage() {
+export default function TodoPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -326,5 +326,3 @@ function TodoPage() {
     </main>
   );
 }
-
-export default TodoPage;

@@ -6,7 +6,7 @@ export interface TestInput {
 }
 
 export interface TestResponse {
-  id: string;
+  id: number;
   content: string;
   createAt: Date;
   updateAt: Date;
@@ -16,10 +16,10 @@ export interface TestResponse {
 // TODO: understand this⬇️
 export class TestService {
   static async createTest(input: TestInput): Promise<TestResponse> {
+    "use server"
     try {
       const test = await prisma.test.create({
         data: {
-          id: crypto.randomUUID(),
           content: input.content,
           userId: input.userId
         },
@@ -38,6 +38,7 @@ export class TestService {
   }
 
   static async getAllTests(): Promise<TestResponse[]> {
+    "use server"
     try {
       const tests = await prisma.test.findMany({
         orderBy: {
@@ -57,7 +58,8 @@ export class TestService {
     }
   }
 
-  static async getTestById(id: string): Promise<TestResponse | null> {
+  static async getTestById(id: number): Promise<TestResponse | null> {
+    "use server"
     try {
       const test = await prisma.test.findUnique({
         where: {
@@ -81,7 +83,8 @@ export class TestService {
     }
   }
 
-  static async updateTest(id: string, input: Partial<TestInput>): Promise<TestResponse | null> {
+  static async updateTest(id: number, input: Partial<TestInput>): Promise<TestResponse | null> {
+    "use server"
     try {
       const test = await prisma.test.update({
         where: {
@@ -104,7 +107,8 @@ export class TestService {
     }
   }
 
-  static async deleteTest(id: string): Promise<boolean> {
+  static async deleteTest(id: number): Promise<boolean> {
+    "use server"
     try {
       await prisma.test.delete({
         where: {

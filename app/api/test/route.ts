@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: { id: number } }) {
   try {
     const body = await request.json()
     const test = await TestService.updateTest(params.id, { content: body.content })
@@ -34,7 +34,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: { id: number } }) {
   try {
     const deleted = await TestService.deleteTest(params.id)
 
