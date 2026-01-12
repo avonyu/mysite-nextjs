@@ -14,7 +14,6 @@ datasource db {
 }
 
 // 用户管理
-
 model User {
   id            String    @id
   name          String
@@ -77,20 +76,6 @@ model Verification {
   @@map("verification")
 }
 
-model Todo {
-  id        String    @id
-  content   String
-  isFinish  Boolean   @default(false)
-  priority  Int       @default(0) // 0: normal 1: important
-  dueDate   DateTime? // 可选的截止日期
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("todo")
-}
-
 model Test {
   id       Int      @id @default(autoincrement())
   content  String
@@ -100,4 +85,38 @@ model Test {
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("test")
+}
+
+// Todo app
+model TodoItem {
+  id          Int            @id @default(autoincrement())
+  content     String
+  steps       TodoSubstep[]
+  isFinish    Boolean        @default(false)
+  isImportant Boolean        @default(false)
+  isToday     Boolean        @default(false)
+  dueDate     DateTime? // 可选的截止日期
+  categories  TodoCategory[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("todo")
+}
+
+// substep
+model TodoSubstep {
+  id         Int      @id @default(autoincrement())
+  content    String
+  todoItemId String
+  todoItem   TodoItem @relation(fields: [todoItemId], references: [id], onDelete: Cascade)
+}
+
+// customed todo category
+model TodoCategory {
+  id    Int     @id @default(autoincrement())
+  name  String
+  icon  String?
+  bgImg String?
 }
