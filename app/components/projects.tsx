@@ -14,7 +14,7 @@ export default async function Projects() {
           All My Projects
         </h1>
 
-        {/* 功能特性网格 */}
+        {/* 项目网格 */}
         <div className="grid md:grid-cols-2 gap-6 mt-12">
           {/* Project 1 */}
           <Link href={session ? "/todo" : "/login"}>

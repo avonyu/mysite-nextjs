@@ -36,9 +36,7 @@ export default async function Home() {
               "dark:text-gray-300"
             )}
           >
-            {
-              "I'm a full-stack Engineer, and I love building things."
-            }
+            {"I'm a full-stack Engineer, and I love building things."}
           </p>
           <div className="mt-10 flex gap-4 animate-fade-in-up delay-200">
             <Link href="/#projects">

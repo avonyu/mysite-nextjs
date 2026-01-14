@@ -10,7 +10,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   if (!session?.user) return;
 
   const { id } = await params;
-  console.log(id);
+
   try {
     const user = await prisma.user.findUnique({
       where: {
