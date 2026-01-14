@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Todo {
   id: string;
@@ -17,7 +18,7 @@ interface Todo {
 
 type Priority = "NORMAL" | "IMPORTANT";
 
-function TodoPage() {
+export default function TodoPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -105,7 +106,10 @@ function TodoPage() {
     return (
       <main className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <div className="flex justify-center items-center min-h-screen">
-          <div className="animate-pulse text-slate-600">Loading...</div>
+          <div className="animate-pulse text-slate-600">
+            <Spinner className="inline-block mr-2 size-6 relative bottom-1" />
+            <span className="text-2xl">Loading...</span>
+          </div>
         </div>
       </main>
     );
@@ -326,5 +330,3 @@ function TodoPage() {
     </main>
   );
 }
-
-export default TodoPage;
