@@ -6,55 +6,79 @@ import { Badge } from "@/components/ui/badge";
 import { GradientColorText } from "@/components/gradient-color-text";
 
 export default function AboutPage() {
+  const stacks: Array<string> = [
+    "Javascript",
+    "Typescript",
+    "React.js",
+    "Next.js",
+    "Node.js",
+    "Bun",
+    "Prisma",
+    "Python",
+  ];
+
   return (
     <>
       <Header />
-      <main className="flex flex-col items-center min-h-screen px-4">
-        <div className="max-w-4xl px-4 mt-30">
-          <Avatar className="size-64">
-            {/* <AvatarImage src="/avatar.jpg" alt="avatar" /> */}
+      <main className="flex flex-col items-center min-h-screen mx-10 md:mx-20">
+        <div className="mt-30">
+          <Avatar className="size-32 sm:size-32 md:size-52 lg:size-64">
+            <AvatarImage src="/avatar.jpg" alt="avatar" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           {/* TODO: 添加联系方式 */}
-          <h1
-            className={cn(
-              "font-bold text-6xl md:text-7xl lg:text-5xl mt-6 mb-5",
-              "bg-clip-text text-transparent bg-linear-to-r from-blue-500 to-teal-400 animate-fade-in"
-            )}
+          <GradientColorText
+            gradientColor="bg-linear-to-r from-[#2CD8D5] to-[#007adf] dark:from-[#009efd] dark:to-[#2af598]"
+            className="font-bold text-3xl sm:text-3xl md:text-4xl lg:text-5xl mt-6 mb-5"
           >
             About Me
-          </h1>
-          <div className="mb-4">
-            <p className="text-xl md:text-2xl text-gray-400 max-w-2xl animate-fade-in-up">
-              Hi, My name is Avon, a full-stack Engineer, and I love building
-              things. Hi, My name is Avon, a full-stack Engineer, and I love
-              building things. Hi, My name is Avon, a full-stack Engineer, and I
-              love building things.
+          </GradientColorText>
+          <div className="mx-2 mb-4 md:text-xl max-w-4xl animate-fade-in-up dark:text-gray-300">
+            <p className="mb-3">
+              Hi, I’m Avon, a passionate full-stack engineer with a knack for
+              turning creative ideas into robust, user-centric digital
+              solutions.
+            </p>
+            <p className="mb-3">
+              My tech stack spans front-end frameworks like React, Vue and
+              Tailwind CSS, where I craft responsive, intuitive UIs that blend
+              aesthetics with functionality. On the back end, I leverage
+              Node.js, Express and PostgreSQL to build scalable APIs, optimize
+              database performance and ensure seamless server-side operations. I
+              also have hands-on experience with DevOps tools like Docker and
+              Git, streamlining deployment workflows for faster, more reliable
+              releases.
+            </p>
+            <p className="mb-3">
+              Driven by curiosity, I thrive on solving complex problems and
+              staying updated with emerging tech trends. When I’m not coding,
+              you’ll find me contributing to open-source projects or
+              experimenting with side projects that push my skills further.
+              Let’s build something amazing together!
             </p>
           </div>
           {/* Sillls */}
           <div className="mb-4">
-            <h2 className="text-2xl font-bold text-cyan-400">Skills</h2>
-            <div className="flex gap-2 flex-wrap">
-              <Badge variant="outline">JavaScript/TypeScript</Badge>
-              <Badge variant="outline">React.js</Badge>
-              <Badge variant="outline">Vue.js</Badge>
-              <Badge variant="outline">Next.js</Badge>
-              <Badge variant="outline">Node.js</Badge>
-              <Badge variant="outline">Bun</Badge>
-              <Badge variant="outline">Prisma</Badge>
-              <Badge variant="outline">Python</Badge>
-            </div>
             <GradientColorText
-              className="font-bold text-6xl"
-              gradientColor="bg-linear-to-br from-[#a18cd1] to-[#fbc2eb]"
+              gradientColor="bg-linear-to-r from-[#2CD8D5] to-[#007adf] dark:from-[#009efd] dark:to-[#2af598]"
+              className="text-xl md:text-2xl lg:text-4xl font-bold mb-4"
             >
-              Made in China
+              Skills
             </GradientColorText>
+            <div className="flex gap-2 flex-wrap px-1 mx-2">
+              {stacks.map((item, idx) => (
+                <Badge key={idx}>{item}</Badge>
+              ))}
+            </div>
           </div>
           {/* S */}
           <div className="mb-4">
-            <h2 className="">Send me message</h2>
+            <GradientColorText
+              gradientColor="bg-linear-to-r from-[#2CD8D5] to-[#007adf] dark:from-[#009efd] dark:to-[#2af598]"
+              className="text-xl md:text-2xl lg:text-4xl font-bold mb-4"
+            >
+              Send me message
+            </GradientColorText>
             <div></div>
           </div>
         </div>

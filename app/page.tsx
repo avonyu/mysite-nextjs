@@ -24,7 +24,7 @@ export default async function Home() {
         <div className="flex flex-col justify-center items-center min-h-screen px-4">
           <div
             className={cn(
-              "font-bold text-6xl sm:text-6xl md:text-7xl lg:text-8xl leading-30",
+              "font-bold text-5xl md:text-6xl lg:text-8xl leading-30",
               "bg-clip-text text-transparent bg-linear-to-r from-blue-500 to-teal-400 animate-fade-in"
             )}
           >
@@ -32,7 +32,7 @@ export default async function Home() {
           </div>
           <p
             className={cn(
-              "mt-6 text-xl md:text-2xl text-gray-600 text-center max-w-2xl animate-fade-in-up",
+              "mt-6 text-base md:text-xl lg:text-2xl text-gray-600 text-center max-w-2xl animate-fade-in-up",
               "dark:text-gray-300"
             )}
           >
