@@ -15,17 +15,18 @@ datasource db {
 
 // 用户管理
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  todos         Todo[]
-  tests         Test[]
+  id             String        @id
+  name           String
+  email          String
+  emailVerified  Boolean       @default(false)
+  image          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
+  sessions       Session[]
+  accounts       Account[]
+  todoItem       TodoItem[]
+  todoCategories TodoSet[]
+  todoSubsteps   TodoSubstep[]
 
   @@unique([email])
   @@map("user")
@@ -76,47 +77,53 @@ model Verification {
   @@map("verification")
 }
 
-model Test {
-  id       Int      @id @default(autoincrement())
-  content  String
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-  userId   String
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("test")
-}
-
 // Todo app
 model TodoItem {
-  id          Int            @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   content     String
-  steps       TodoSubstep[]
-  isFinish    Boolean        @default(false)
-  isImportant Boolean        @default(false)
-  isToday     Boolean        @default(false)
-  dueDate     DateTime? // 可选的截止日期
-  categories  TodoCategory[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  isFinish    Boolean       @default(false)
+  isImportant Boolean       @default(false)
+  isToday     Boolean       @default(false)
+  order       Int
+  todoSetId   Int?
+  todoSet     TodoSet?      @relation(fields: [todoSetId], references: [id], onDelete: Cascade)
+  dueDate     DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   userId      String
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  substeps    TodoSubstep[]
 
-  @@map("todo")
+  @@map("todoItem")
 }
 
 // substep
 model TodoSubstep {
   id         Int      @id @default(autoincrement())
   content    String
-  todoItemId String
+  isFinish   Boolean  @default(false)
+  order      Int
+  todoItemId Int
   todoItem   TodoItem @relation(fields: [todoItemId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("todoSubstep")
 }
 
-// customed todo category
-model TodoCategory {
-  id    Int     @id @default(autoincrement())
-  name  String
-  icon  String?
-  bgImg String?
+// customed todo sets
+model TodoSet {
+  id        Int        @id @default(autoincrement())
+  name      String
+  emoji     String?
+  bgImg     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  todoItems TodoItem[]
+
+  @@map("todoSet")
 }
