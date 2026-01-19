@@ -1,21 +1,5 @@
-import React from "react";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import SidePannel from "./components/side-pannel";
-import MainArea from "./components/main-area";
+"use client";
 
-<<<<<<< HEAD
-// 主组件
-const TaskManagerApp = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(), // you need to pass the headers object.
-  });
-
-  if (!session) redirect("/login");
-  return (
-    <div className="h-screen overflow-hidden bg-white font-sans min-w-200 flex">
-=======
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
@@ -67,11 +51,8 @@ export default function TodoPage() {
 
   return (
     <div className="min-h-screen max-h-20 flex gap-2 dark:bg-gray-900">
->>>>>>> 43ad6d9 (feat(database): restructure TodoSubstep table and add timestamps to)
       <SidePannel />
       <MainArea />
     </div>
   );
-};
-
-export default TaskManagerApp;
+}
