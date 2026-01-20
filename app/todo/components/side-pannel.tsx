@@ -18,7 +18,27 @@ import {
   Bookmark,
   FolderPlus,
   Briefcase,
+  UserRoundCog,
+  Settings,
+  CircleQuestionMark,
+  RefreshCw,
+  House,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 interface NavList {
   id: string;
@@ -71,8 +91,64 @@ const customNavList: NavList[] = [
   },
 ];
 
-export default function SidePannel() {
+function UserInfo() {
   const { data: session } = useSession();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <div className="flex items-center gap-2.5 pb-2 ">
+          <Avatar className="size-10">
+            <AvatarImage
+              src={session?.user.image || undefined}
+              alt="User Avatar"
+            />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <h3 className="text-sm font-semibold text-gray-700">
+              {session?.user.name}
+            </h3>
+            <p className="text-xs text-gray-600">{session?.user.email}</p>
+          </div>
+        </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="start">
+        <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <RefreshCw />
+            重试同步
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <CircleQuestionMark />
+            了解详细信息
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <UserRoundCog />
+          管理账户
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <Link href="/">
+            <DropdownMenuItem>
+              <House />
+              返回主页
+            </DropdownMenuItem>
+          </Link>
+          <Link href={session?.user ? "/todo/setting" : "/"}>
+            <DropdownMenuItem>
+              <Settings />
+              设置
+            </DropdownMenuItem>
+          </Link>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export default function SidePannel() {
   const [activeNav, setActiveNav] = useState("tasks");
 
   return (
@@ -86,23 +162,8 @@ export default function SidePannel() {
         {/* 侧边栏内容 */}
         <div className="h-full flex flex-col overflow-hidden px-3 pt-3 w-full relative">
           {/* 个人信息区 + 带图标的搜索框 */}
+          <UserInfo />
           <div className="flex flex-col">
-            <div className="flex items-center gap-2.5 pb-2 ">
-              <Avatar className="size-10">
-                <AvatarImage
-                  src={session?.user.image || undefined}
-                  alt="User Avatar"
-                />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <h3 className="text-sm font-semibold text-gray-700">
-                  {session?.user.name}
-                </h3>
-                <p className="text-xs text-gray-600">{session?.user.email}</p>
-              </div>
-            </div>
-
             <div className="relative mb-4">
               <Search
                 size={16}
