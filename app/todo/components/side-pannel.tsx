@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSession } from "@/lib/auth-client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Resizable } from "re-resizable";
 import {
@@ -102,7 +102,6 @@ function UserInfo() {
               src={session?.user.image || undefined}
               alt="User Avatar"
             />
-            <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <h3 className="text-sm font-semibold text-gray-700">
