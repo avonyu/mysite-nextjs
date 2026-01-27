@@ -12,7 +12,7 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <div className={cn("text-sm text-gray-600", "dark:text-gray-400")}>
-            © {new Date().getFullYear()} Todo List App. All rights reserved.
+            © {new Date().getFullYear()} Avon. All rights reserved.
           </div>
           <div className="flex gap-4">
             <Link

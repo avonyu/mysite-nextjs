@@ -50,7 +50,7 @@ export default function TodoPage() {
   // if (loading) return <Loading />;
 
   return (
-    <div className="min-h-screen max-h-20 flex gap-2 dark:bg-gray-900">
+    <div className="min-h-screen max-h-20 flex dark:bg-gray-900">
       <SidePannel />
       <MainArea />
     </div>

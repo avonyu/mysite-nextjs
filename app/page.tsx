@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import Projects from "@/app/components/projects";
+import Projects from "@/app/projects";
 
 export default async function Home() {
   // const session = await auth.api.getSession({

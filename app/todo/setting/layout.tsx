@@ -1,31 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  ChevronLeft,
-  Star,
-  Calendar,
-  User,
-  Infinity,
-  Check,
-  Flag,
-  Bell,
-  Share2,
-  Info,
-  Lightbulb,
-  MessageSquare,
-  Copy,
-  RotateCw,
-  Wrench,
-  Mail,
-  ChevronDown,
-  Moon,
-  Sun,
-  Monitor,
-  Twitter,
-  Facebook,
-  Heart,
-} from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 

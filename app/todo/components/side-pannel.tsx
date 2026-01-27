@@ -23,6 +23,7 @@ import {
   CircleQuestionMark,
   RefreshCw,
   House,
+  ChevronsUpDown,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -97,7 +98,7 @@ function UserInfo() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex items-center gap-2.5 pb-2 ">
-          <Avatar className="size-10">
+          <Avatar className="size-11">
             <AvatarImage
               src={session?.user.image || undefined}
               alt="User Avatar"
@@ -107,7 +108,10 @@ function UserInfo() {
             <h3 className="text-sm font-semibold text-gray-700">
               {session?.user.name}
             </h3>
-            <p className="text-xs text-gray-600">{session?.user.email}</p>
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-gray-600">{session?.user.email}</p>
+              <ChevronsUpDown size={14} />
+            </div>
           </div>
         </div>
       </DropdownMenuTrigger>
