@@ -2,6 +2,41 @@
 
 import { useState } from "react";
 import { Home, Star, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+function TaskItem({ task }: { task: Tasks }) {
+  const [tasks, setTasks] = useState<Tasks[]>(simpleTasks);
+  // 星标切换功能
+  const toggleStar = (taskId: number) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === taskId ? { ...task, starred: !task.starred } : task,
+      ),
+    );
+  };
+  return (
+    <div className="bg-gray-50/95 rounded p-4 shadow-sm flex items-center gap-3 hover:bg-white transition-transform">
+      <input type="checkbox" className="w-4.5 h-4.5" />
+      <div className="flex-1">
+        <div className="text-sm font-medium">{task.title}</div>
+        {task.subtitle && (
+          <div className="text-xs text-gray-600">{task.subtitle}</div>
+        )}
+      </div>
+      <button
+        onClick={() => toggleStar(task.id)}
+        className="bg-transparent border-none cursor-pointer text-gray-400 hover:text-gray-500"
+      >
+        <Star
+          size={16}
+          fill={task.starred ? "#6a7282" : "none"}
+          className={task.starred ? "text-gray-500" : ""}
+        />
+      </button>
+    </div>
+  );
+}
 
 interface Tasks {
   id: number;
@@ -90,56 +125,40 @@ function MainArea() {
   // 任务数据
   const [tasks, setTasks] = useState<Tasks[]>(simpleTasks);
 
-  // 星标切换功能
-  const toggleStar = (taskId: number) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, starred: !task.starred } : task
-      )
-    );
-  };
-
   return (
-    <main className="flex-1 flex flex-col rounded-tl-md bg-linear-to-br from-[#1a936f] to-[#f3d2c1] overflow-hidden">
-      {/* 顶部导航栏 */}
-      <header className="flex items-center px-6 py-4 bg-white/10 backdrop-blur-md">
-        <Home size={24} className="text-white" />
-        <h1 className="text-white text-xl font-semibold ml-2">任务</h1>
-      </header>
+    <main
+      className={cn(
+        "w-full rounded-tl-md overflow-hidden",
+        "bg-[url(/todo-wallpapers/bg-6.png)] bg-cover bg-center",
+      )}
+    >
+      <div className="flex flex-col px-12 h-full">
+        {/* 顶部导航栏 */}
+        <div className="flex items-center py-6">
+          <Home size={24} className="text-white" />
+          <h1 className="text-white text-3xl font-semibold ml-2">任务</h1>
+        </div>
 
-      {/* 任务列表容器 */}
-      <div className="flex-1 overflow-y-auto p-6">
-        {/* 任务卡片列表 */}
-        {tasks.map((task) => (
-          <div
-            key={task.id}
-            className="bg-gray-50 rounded p-4 mb-1 shadow-sm flex items-center gap-3 hover:bg-white transition-transform"
-          >
-            <input type="checkbox" className="w-4.5 h-4.5" />
-            <div className="flex-1">
-              <div className="text-sm font-medium">{task.title}</div>
-              {task.subtitle && (
-                <div className="text-xs text-gray-600">{task.subtitle}</div>
-              )}
-            </div>
-            <button
-              onClick={() => toggleStar(task.id)}
-              className="bg-transparent border-none cursor-pointer text-gray-400 hover:text-gray-500"
-            >
-              <Star
-                size={16}
-                fill={task.starred ? "#6a7282" : "none"}
-                className={task.starred ? "text-gray-500" : ""}
-              />
-            </button>
-          </div>
-        ))}
+        {/* 任务列表容器 */}
+        <div
+          className={cn(
+            "flex-1 py-1 flex flex-col space-y-1 overflow-y-auto",
+            "scrollbar-thin",
+          )}
+        >
+          {/* 任务卡片列表 */}
+          {tasks.map((task) => (
+            <TaskItem task={task} key={task.id} />
+          ))}
+        </div>
 
         {/* 添加任务按钮 */}
-        <button className="w-full flex items-center gap-2 px-3 py-3 border border-dashed border-gray-300 bg-white/80 text-gray-600 rounded-lg text-sm hover:bg-white mt-4">
-          <Plus size={16} />
-          添加任务
-        </button>
+        <div className="pb-12 pt-2">
+          <div className="w-full flex items-center gap-2 px-3 py-3 border border-gray-300 bg-white/80 text-gray-600 rounded-sm text-sm hover:bg-white">
+            <Plus size={20} />
+            添加任务
+          </div>
+        </div>
       </div>
     </main>
   );
