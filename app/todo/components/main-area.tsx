@@ -1,42 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Home, Star, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Home, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-function TaskItem({ task }: { task: Tasks }) {
-  const [tasks, setTasks] = useState<Tasks[]>(simpleTasks);
-  // 星标切换功能
-  const toggleStar = (taskId: number) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, starred: !task.starred } : task,
-      ),
-    );
-  };
-  return (
-    <div className="bg-gray-50/95 rounded p-4 shadow-sm flex items-center gap-3 hover:bg-white transition-transform">
-      <input type="checkbox" className="w-4.5 h-4.5" />
-      <div className="flex-1">
-        <div className="text-sm font-medium">{task.title}</div>
-        {task.subtitle && (
-          <div className="text-xs text-gray-600">{task.subtitle}</div>
-        )}
-      </div>
-      <button
-        onClick={() => toggleStar(task.id)}
-        className="bg-transparent border-none cursor-pointer text-gray-400 hover:text-gray-500"
-      >
-        <Star
-          size={16}
-          fill={task.starred ? "#6a7282" : "none"}
-          className={task.starred ? "text-gray-500" : ""}
-        />
-      </button>
-    </div>
-  );
-}
+import TaskItem from "./task-item";
 
 interface Tasks {
   id: number;
@@ -142,7 +109,7 @@ function MainArea() {
         {/* 任务列表容器 */}
         <div
           className={cn(
-            "flex-1 py-1 flex flex-col space-y-1 overflow-y-auto",
+            "flex-1 py-1 flex flex-col space-y-0.5 overflow-y-auto",
             "scrollbar-thin",
           )}
         >
@@ -154,9 +121,13 @@ function MainArea() {
 
         {/* 添加任务按钮 */}
         <div className="pb-12 pt-2">
-          <div className="w-full flex items-center gap-2 px-3 py-3 border border-gray-300 bg-white/80 text-gray-600 rounded-sm text-sm hover:bg-white">
+          <div className="w-full flex items-center gap-2 px-3 py-3 border border-gray-300 bg-white/80 backdrop-blur text-gray-600 rounded-sm text-sm hover:bg-white">
             <Plus size={20} />
-            添加任务
+            <input
+              type="text"
+              placeholder="添加任务"
+              className="flex-1 focus:outline-none"
+            />
           </div>
         </div>
       </div>
