@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Star, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Tasks {
   id: number;
@@ -19,22 +20,36 @@ function TaskItem({ task }: { task: Tasks }) {
   };
 
   return (
-    <div className="bg-gray-50/95 rounded p-4 shadow-sm flex items-center gap-3 hover:bg-white transition-transform">
+    <div
+      className={cn(
+        "bg-gray-50/95 rounded p-3 shadow-sm flex items-center gap-3 hover:bg-white transition-transform",
+        "dark:bg-zinc-800/95 dark:hover:bg-zinc-700/95",
+      )}
+    >
       <div className="relative flex items-center justify-center">
         <input
           type="checkbox"
-          className="peer appearance-none size-5 rounded-full border-2 border-gray-500 checked:bg-gray-500 checked:border-transparent transition-all"
+          className={cn(
+            "appearance-none size-4 rounded-full border-2 border-gray-500",
+            "peer checked:bg-gray-500 checked:border-transparent checked:border-0",
+            "dark:border-gray-300",
+          )}
         />
         <Check
-          size={12}
-          strokeWidth={3}
-          className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
+          size={10}
+          strokeWidth={4}
+          className={cn(
+            "absolute text-gray-500 dark:text-gray-200 pointer-events-none opacity-0",
+            "peer-checked:opacity-100 dark:peer-checked:text-gray-900 peer-hover:opacity-100",
+          )}
         />
       </div>
       <div className="flex-1">
         <div className="text-sm font-medium">{task.title}</div>
         {task.subtitle && (
-          <div className="text-xs text-gray-600">{task.subtitle}</div>
+          <div className="text-xs text-gray-600 dark:text-gray-200">
+            {task.subtitle}
+          </div>
         )}
       </div>
       <button

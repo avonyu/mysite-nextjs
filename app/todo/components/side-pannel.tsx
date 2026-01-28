@@ -105,11 +105,13 @@ function UserInfo() {
             />
           </Avatar>
           <div className="flex flex-col">
-            <h3 className="text-sm font-semibold text-gray-700">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">
               {session?.user.name}
             </h3>
             <div className="flex items-center gap-1">
-              <p className="text-xs text-gray-600">{session?.user.email}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-200">
+                {session?.user.email}
+              </p>
               <ChevronsUpDown size={14} />
             </div>
           </div>
@@ -161,7 +163,7 @@ export default function SidePannel() {
       minWidth={220}
       maxWidth={400}
     >
-      <aside className="flex flex-col h-full w-full relative bg-white">
+      <aside className="flex flex-col h-full w-full relative bg-white dark:bg-zinc-800">
         {/* 侧边栏内容 */}
         <div className="h-full flex flex-col overflow-hidden px-3 pt-3 w-full relative">
           {/* 个人信息区 + 带图标的搜索框 */}

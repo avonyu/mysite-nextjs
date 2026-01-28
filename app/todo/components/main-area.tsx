@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Home, Plus } from "lucide-react";
+import { Home, Plus, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TaskItem from "./task-item";
 
@@ -121,8 +121,13 @@ function MainArea() {
 
         {/* 添加任务按钮 */}
         <div className="pb-12 pt-2">
-          <div className="w-full flex items-center gap-2 px-3 py-3 border border-gray-300 bg-white/80 backdrop-blur text-gray-600 rounded-sm text-sm hover:bg-white">
+          <div className="w-full flex items-center gap-2 px-3 py-3 border border-gray-300 bg-white/70 backdrop-blur text-gray-600 rounded text-sm hover:bg-white/80">
             <Plus size={20} />
+            <Check
+              size={12}
+              strokeWidth={3}
+              className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
+            />
             <input
               type="text"
               placeholder="添加任务"
