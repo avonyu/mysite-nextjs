@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Home, Plus, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TaskItem from "./task-item";
+import { createTodoItem } from "@/lib/server/todo/todo-actions";
+import { useSession } from "@/lib/auth-client";
 
 interface Tasks {
   id: number;
@@ -89,11 +91,19 @@ const simpleTasks: Tasks[] = [
 ];
 
 function MainArea() {
+  const { data: session } = useSession();
+  if (!session?.user) return null;
+  const createTodoItemWithUserId = createTodoItem.bind(
+    null,
+    session.user.id,
+  );
   // 任务数据
   const [tasks, setTasks] = useState<Tasks[]>(simpleTasks);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <main
+      onClick={() => inputRef.current?.focus()}
       className={cn(
         "w-full rounded-tl-md overflow-hidden",
         "bg-[url(/todo-wallpapers/bg-6.png)] bg-cover bg-center",
@@ -128,11 +138,15 @@ function MainArea() {
               strokeWidth={3}
               className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
             />
-            <input
-              type="text"
-              placeholder="添加任务"
-              className="flex-1 focus:outline-none"
-            />
+            <form action={createTodoItemWithUserId}>
+              <input
+                ref={inputRef}
+                type="text"
+                name="content"
+                placeholder="添加任务"
+                className="flex-1 focus:outline-none"
+              />
+            </form>
           </div>
         </div>
       </div>
