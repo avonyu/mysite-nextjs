@@ -10,7 +10,6 @@ export interface TodoItemInput {
   order: number;
   todoSetId: number | null;
   dueDate: Date | null;
-  userId: string;
 }
 
 export interface Response {
@@ -48,11 +47,14 @@ export interface TodoSetResponse {
   userId: string;
 }
 
-export async function createTodoItem(input: TodoItemInput): Promise<Response> {
+export async function createTodoItem({ userId, formData }: { userId: string, formData: TodoItemInput }): Promise<Response> {
   try {
+    console.log({ userId, formData })
+    if (!userId) throw new Error("userId is undefined")
     const todoItem = await prisma.todoItem.create({
       data: {
-        ...input,
+        userId: userId,
+        ...formData,
       },
     });
 
