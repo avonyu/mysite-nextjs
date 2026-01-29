@@ -1,17 +1,11 @@
 import { useState } from "react";
-import { Star, Check } from "lucide-react";
+import { Star, Check, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TodoItem } from "@/generated/prisma/client";
 
-interface Tasks {
-  id: number;
-  title: string;
-  subtitle: string;
-  starred: boolean;
-}
-
-function TaskItem({ task }: { task: Tasks }) {
+function TaskItem({ task, className }: { task: TodoItem; className?: string }) {
   // 星标切换功能
-  const toggleStar = (taskId: number) => {
+  const toggleStar = (taskId: string) => {
     // setTasks(
     //   tasks.map((task) =>
     //     task.id === taskId ? { ...task, starred: !task.starred } : task,
@@ -24,6 +18,7 @@ function TaskItem({ task }: { task: Tasks }) {
       className={cn(
         "bg-gray-50/95 rounded p-3 shadow-sm flex items-center gap-3 hover:bg-white transition-transform",
         "dark:bg-zinc-800/95 dark:hover:bg-zinc-700/95",
+        className,
       )}
     >
       <div className="relative flex items-center justify-center">
@@ -39,16 +34,17 @@ function TaskItem({ task }: { task: Tasks }) {
           size={10}
           strokeWidth={4}
           className={cn(
-            "absolute text-gray-500 dark:text-gray-200 pointer-events-none opacity-0",
-            "peer-checked:opacity-100 dark:peer-checked:text-gray-900 peer-hover:opacity-100",
+            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ",
+            "text-gray-500 dark:text-gray-200 pointer-events-none opacity-0",
+            "peer-checked:opacity-100 peer-checked:text-gray-200 dark:peer-checked:text-gray-900 peer-hover:opacity-100",
           )}
         />
       </div>
       <div className="flex-1">
-        <div className="text-sm font-medium">{task.title}</div>
-        {task.subtitle && (
-          <div className="text-xs text-gray-600 dark:text-gray-200">
-            {task.subtitle}
+        <div className="text-sm font-medium">{task.content}</div>
+        {task.isToday && (
+          <div className="text-xs text-gray-600 dark:text-gray-200 flex items-center gap-1">
+            <Sun size={12} /> 我的一天
           </div>
         )}
       </div>
@@ -58,8 +54,8 @@ function TaskItem({ task }: { task: Tasks }) {
       >
         <Star
           size={16}
-          fill={task.starred ? "#6a7282" : "none"}
-          className={task.starred ? "text-gray-500" : ""}
+          fill={task.isImportant ? "#6a7282" : "none"}
+          className={task.isImportant ? "text-gray-500" : ""}
         />
       </button>
     </div>

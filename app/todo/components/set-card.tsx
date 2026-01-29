@@ -1,0 +1,36 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { type todoSet } from "../config";
+
+export default function SetCard({ todoSet }: { todoSet: todoSet }) {
+  return (
+    <Card className="w-55 rounded-md border-0 bg-stone-600/90 backdrop-blur gap-2 py-4">
+      <div className="flex justify-center my-4">
+        <Image
+          src={todoSet.card?.img as string}
+          alt={todoSet.id}
+          width={100}
+          height={100}
+        />
+      </div>
+      {todoSet.card?.title && (
+        <CardHeader>
+          <CardTitle className="text-white text-xl">
+            {todoSet.card.title}
+          </CardTitle>
+        </CardHeader>
+      )}
+      <CardContent className="px-4">
+        <p className="text-white text-xs text-center">{todoSet.card?.content}</p>
+      </CardContent>
+      {todoSet.id === "today" && (
+        <div className="mx-8">
+          <Button variant="secondary" size="sm" className="w-full text-xs">
+            向“我的一天”添加任务
+          </Button>
+        </div>
+      )}
+    </Card>
+  );
+}

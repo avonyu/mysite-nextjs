@@ -1,108 +1,51 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Home, Plus, Check } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Home, Plus, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TaskItem from "./task-item";
-import { createTodoItem } from "@/lib/server/todo/todo-actions";
-import { useSession } from "@/lib/auth-client";
+import {
+  getAllTodoItemsByTodoSetId,
+  createTodoItem,
+} from "@/lib/actions/todo/todo-actions";
+import { TodoItem } from "@/generated/prisma/client";
+import { useTodoAppStore } from "@/store";
+import { type todoSet } from "../config";
+import SetCard from "./set-card";
 
-interface Tasks {
-  id: number;
-  title: string;
-  subtitle: string;
-  starred: boolean;
-}
-
-const simpleTasks: Tasks[] = [
-  {
-    id: 1,
-    title:
-      "写了一个爬虫去爬各种技术社区、爬领英，只要找到相关岗位，就会自动发邮件给我，我就立马去查看",
-    subtitle: "",
-    starred: false,
-  },
-  {
-    id: 2,
-    title: "前端/技术/自媒体矩阵",
-    subtitle: "第 0 步，共 10 步",
-    starred: false,
-  },
-  {
-    id: 3,
-    title: "面试问题",
-    subtitle: "第 0 步，共 5 步",
-    starred: false,
-  },
-  {
-    id: 4,
-    title: "自动化工具研究",
-    subtitle: "",
-    starred: false,
-  },
-  {
-    id: 5,
-    title: "高级前端:了解wasm",
-    subtitle: "",
-    starred: false,
-  },
-  {
-    id: 6,
-    title: "Prisma操作数据库",
-    subtitle: "",
-    starred: false,
-  },
-  {
-    id: 7,
-    title: "telegram图片整理",
-    subtitle: "",
-    starred: false,
-  },
-  {
-    id: 8,
-    title: "清理Chrome阅读清单",
-    subtitle: "",
-    starred: false,
-  },
-  {
-    id: 9,
-    title: "figma mcp",
-    subtitle: "",
-    starred: false,
-  },
-  {
-    id: 10,
-    title: "阮一峰Typescript教程",
-    subtitle: "",
-    starred: false,
-  },
-  {
-    id: 11,
-    title: "了解Dify的基础使用",
-    subtitle: "",
-    starred: false,
-  },
-  {
-    id: 12,
-    title: "了解敏捷开发（Agile software development）",
-    subtitle: "第 0 步，共 1 步",
-    starred: false,
-  },
-];
-
-function MainArea() {
-  const { data: session } = useSession();
-  if (!session?.user) return null;
-  const createTodoItemWithUserId = createTodoItem.bind(
-    null,
-    session.user.id,
-  );
-  // 任务数据
-  const [tasks, setTasks] = useState<Tasks[]>(simpleTasks);
+function MainArea({ todoSet }: { todoSet: todoSet }) {
+  const user = useTodoAppStore((state) => state.user);
+  const [tasks, setTasks] = useState<TodoItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const createTodoItemWithUserId = createTodoItem.bind(null, user?.id);
+
+  // 处理创建任务的表单提交，可快速响应用户输入
+  const handleCreateTodo = async (formData: FormData) => {
+    const content = formData.get("content") as string;
+    if (!content.trim()) return; // 内容为空时，不处理
+    const res = await createTodoItemWithUserId(formData);
+    if (res.code === 200) {
+      setTasks([...(res.data || []), ...tasks]);
+    }
+  };
+
+  useEffect(() => {
+    if (!user?.id) return;
+    console.log("Fetch todo data for todo set", todoSet.id);
+    getAllTodoItemsByTodoSetId(user.id, todoSet.id).then((res) => {
+      setTasks(res.data || []);
+    });
+  }, [todoSet.id, user]);
 
   return (
     <main
+      onMouseDown={(e) => {
+        // 如果输入框已经聚焦，且点击的不是输入框本身，阻止默认行为（防止失去焦点）
+        if (isInputFocused && e.target !== inputRef.current) {
+          e.preventDefault();
+        }
+      }}
       onClick={() => inputRef.current?.focus()}
       className={cn(
         "w-full rounded-tl-md overflow-hidden",
@@ -119,7 +62,8 @@ function MainArea() {
         {/* 任务列表容器 */}
         <div
           className={cn(
-            "flex-1 py-1 flex flex-col space-y-0.5 overflow-y-auto",
+            "flex-1 py-1 flex flex-col space-y-0.5 overflow-y-auto relative",
+            tasks.length === 0 && "items-center justify-center",
             "scrollbar-thin",
           )}
         >
@@ -127,24 +71,40 @@ function MainArea() {
           {tasks.map((task) => (
             <TaskItem task={task} key={task.id} />
           ))}
+          {/* 提示卡片 */}
+          {todoSet.card && tasks.length === 0 && <SetCard todoSet={todoSet} />}
         </div>
 
         {/* 添加任务按钮 */}
         <div className="pb-12 pt-2">
           <div className="w-full flex items-center gap-2 px-3 py-3 border border-gray-300 bg-white/70 backdrop-blur text-gray-600 rounded text-sm hover:bg-white/80">
-            <Plus size={20} />
-            <Check
-              size={12}
-              strokeWidth={3}
-              className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
-            />
-            <form action={createTodoItemWithUserId}>
+            <div className="relative w-5 h-5 flex items-center justify-center">
+              <Circle
+                size={20}
+                strokeWidth={2}
+                className={cn(
+                  "absolute text-gray-800 pointer-events-none transition-all duration-200 transform",
+                  isInputFocused ? "opacity-100" : "opacity-0",
+                )}
+              />
+              <Plus
+                size={20}
+                strokeWidth={2}
+                className={cn(
+                  "absolute text-gray-800 transition-all duration-200 transform",
+                  isInputFocused ? "opacity-0" : "opacity-100",
+                )}
+              />
+            </div>
+            <form action={handleCreateTodo} className="flex-1">
               <input
                 ref={inputRef}
                 type="text"
                 name="content"
                 placeholder="添加任务"
-                className="flex-1 focus:outline-none"
+                className="w-full bg-transparent focus:outline-none"
+                onFocus={() => setIsInputFocused(true)}
+                onBlur={() => setIsInputFocused(false)}
               />
             </form>
           </div>

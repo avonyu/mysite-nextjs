@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import { Spinner } from "@/components/ui/spinner";
-import { getAllTodoItems } from "@/lib/server/todo/todo-actions";
+// import { getAllTodoItems } from "@/lib/actions/todo/todo-actions";
 import SidePannel from "./components/side-pannel";
 import MainArea from "./components/main-area";
+import { useTodoAppStore } from "@/store";
+import { todoConfig as todoSets, type todoSet } from "./config";
 
 interface Todo {
   id: string;
@@ -32,10 +34,10 @@ function Loading() {
   );
 }
 
-const { data: session } = await authClient.getSession();
-
 export default function TodoPage() {
+  const user = useTodoAppStore((state) => state.user);
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [todoSet, setTodoSet] = useState("today");
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
@@ -43,16 +45,16 @@ export default function TodoPage() {
     dueDate: "",
   });
 
-  useEffect(() => {
-    getAllTodoItems(session?.user.id).finally(() => setLoading(false));
-  }, []);
+  // useEffect(() => {
+  //   getAllTodoItems(session?.user.id).finally(() => setLoading(false));
+  // }, []);
 
   // if (loading) return <Loading />;
 
   return (
     <div className="min-h-screen max-h-20 flex dark:bg-gray-900">
       <SidePannel />
-      <MainArea />
+      <MainArea todoSet={todoSets[5]} />
     </div>
   );
 }

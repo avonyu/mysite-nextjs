@@ -79,13 +79,13 @@ model Verification {
 
 // Todo app
 model TodoItem {
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(cuid(2))
   content     String
   isFinish    Boolean       @default(false)
   isImportant Boolean       @default(false)
   isToday     Boolean       @default(false)
-  order       Int
-  todoSetId   Int?
+  // order       Int
+  todoSetId   String?
   todoSet     TodoSet?      @relation(fields: [todoSetId], references: [id], onDelete: Cascade)
   dueDate     DateTime?
   createdAt   DateTime      @default(now())
@@ -99,11 +99,11 @@ model TodoItem {
 
 // substep
 model TodoSubstep {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(cuid(2))
   content    String
   isFinish   Boolean  @default(false)
-  order      Int
-  todoItemId Int
+  // order      Int
+  todoItemId String
   todoItem   TodoItem @relation(fields: [todoItemId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
@@ -115,7 +115,7 @@ model TodoSubstep {
 
 // customed todo sets
 model TodoSet {
-  id        Int        @id @default(autoincrement())
+  id        String     @id @default(cuid(2))
   name      String
   emoji     String?
   bgImg     String?

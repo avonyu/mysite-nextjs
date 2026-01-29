@@ -45,7 +45,7 @@ export default function LoginPage() {
     <main
       className={cn(
         "bg-linear-to-br from-gray-50 to-gray-200",
-        "dark:from-gray-900 dark:to-gray-800"
+        "dark:from-gray-900 dark:to-gray-800",
       )}
     >
       <div className="flex min-h-screen items-center justify-center">

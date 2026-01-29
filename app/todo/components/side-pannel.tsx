@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "@/lib/auth-client";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Resizable } from "re-resizable";
@@ -40,41 +39,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { useTodoAppStore } from "@/store/todo-app";
+import { todoConfig as navList, type todoSet } from "../config";
 
-interface NavList {
-  id: string;
-  label: string;
-  icon: React.JSX.Element;
-  count?: number | undefined;
-}
-
-const navList: NavList[] = [
-  { id: "today", label: "我的一天", icon: <Sun size={16} /> },
-  { id: "important", label: "重要", icon: <Star size={16} /> },
-  {
-    id: "planned",
-    label: "计划内",
-    icon: <SquareKanban size={16} />,
-  },
-  {
-    id: "assigned",
-    label: "已分配给我",
-    icon: <User size={16} />,
-  },
-  {
-    id: "flagged",
-    label: "标记的电子邮件",
-    icon: <Flag size={16} />,
-  },
-  {
-    id: "tasks",
-    label: "任务",
-    icon: <Home size={16} />,
-    count: 22,
-  },
-];
-
-const customNavList: NavList[] = [
+// custom navList
+const customNavList: todoSet[] = [
   {
     id: "self-project",
     label: "个人项目",
@@ -93,24 +62,22 @@ const customNavList: NavList[] = [
 ];
 
 function UserInfo() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
+  const user = useTodoAppStore((state) => state.user);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex items-center gap-2.5 pb-2 ">
           <Avatar className="size-11">
-            <AvatarImage
-              src={session?.user.image || undefined}
-              alt="User Avatar"
-            />
+            <AvatarImage src={user?.image || undefined} alt="User Avatar" />
           </Avatar>
           <div className="flex flex-col">
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-              {session?.user.name}
+              {user?.name}
             </h3>
             <div className="flex items-center gap-1">
               <p className="text-xs text-gray-600 dark:text-gray-200">
-                {session?.user.email}
+                {user?.email}
               </p>
               <ChevronsUpDown size={14} />
             </div>
@@ -141,7 +108,7 @@ function UserInfo() {
               返回主页
             </DropdownMenuItem>
           </Link>
-          <Link href={session?.user ? "/todo/setting" : "/"}>
+          <Link href={user ? "/todo/setting" : "/"}>
             <DropdownMenuItem>
               <Settings />
               设置

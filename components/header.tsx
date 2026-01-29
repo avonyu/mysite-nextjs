@@ -10,18 +10,19 @@ export default async function Header() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
   return (
     <header
       className={cn(
-        "sticky top-0 w-full flex justify-between p-4 bg-white/80 backdrop-blur border-b border-gray-200 z-999",
-        "dark:border-gray-800 dark:bg-gray-950/80"
+        "sticky top-0 w-full flex justify-between p-4 bg-white/80 backdrop-blur border-b border-gray-200 z-10",
+        "dark:border-gray-800 dark:bg-gray-950/80",
       )}
     >
       <Link
         href="/"
         className={cn(
           "p-1 text-cyan-500 font-bold text-xl",
-          "dark:text-cyan-400"
+          "dark:text-cyan-400",
         )}
       >
         {"Avon's Page"}

@@ -8,6 +8,21 @@ export interface TodoSet {
   userId: string;
 }
 
+export interface TodoSetInput {
+  name: string;
+  emoji?: string;
+  bgImg?: string;
+  userId: string;
+}
+
+export interface TodoSetResponse {
+  id: number;
+  name: string;
+  emoji?: string;
+  bgImg?: string;
+  userId: string;
+}
+
 export interface Response {
   message: string;
   code: number; // 200: success, 400: bad request, 500: internal server error
