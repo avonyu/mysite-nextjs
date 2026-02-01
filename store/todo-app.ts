@@ -1,16 +1,16 @@
 import { create } from 'zustand'
 import { User } from '@/generated/prisma/client'
 import { persist } from 'zustand/middleware'
-import {} from '@/lib/actions/types'
+import { type todoSet } from '@/app/todo/config'
 
 type State = {
   user: User | undefined
-  currentSet: string
+  currentSet?: todoSet
 }
 
 type Actions = {
   setUser: (user: User | undefined) => void
-  setTodoSet: (currentSet: string) => void
+  setTodoSet: (currentSet: todoSet) => void
 }
 
 // Example usage
@@ -24,7 +24,7 @@ type Actions = {
 export const useTodoAppStore = create<State & Actions>()(
   persist((set) => ({
     user: undefined,
-    currentSet: "today",
+    currentSet: undefined,
     setUser: (user) => set({ user }),
     setTodoSet: (currentSet) => set({ currentSet: currentSet }),
   }), {

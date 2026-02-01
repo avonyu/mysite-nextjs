@@ -2,15 +2,15 @@ import { useState } from "react";
 import { Star, Check, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TodoItem } from "@/generated/prisma/client";
+import { changeTodoItem } from "@/lib/actions/todo/todo-actions";
 
 function TaskItem({ task, className }: { task: TodoItem; className?: string }) {
+  const [isStarred, setIsStarred] = useState(task.isImportant);
+
   // 星标切换功能
   const toggleStar = (taskId: string) => {
-    // setTasks(
-    //   tasks.map((task) =>
-    //     task.id === taskId ? { ...task, starred: !task.starred } : task,
-    //   ),
-    // );
+    changeTodoItem(taskId, { isImportant: !isStarred });
+    setIsStarred(!isStarred);
   };
 
   return (
@@ -54,8 +54,8 @@ function TaskItem({ task, className }: { task: TodoItem; className?: string }) {
       >
         <Star
           size={16}
-          fill={task.isImportant ? "#6a7282" : "none"}
-          className={task.isImportant ? "text-gray-500" : ""}
+          fill={isStarred ? "#6a7282" : "none"}
+          className={isStarred ? "text-gray-500" : ""}
         />
       </button>
     </div>
