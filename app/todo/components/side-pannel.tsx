@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { cloneElement, useState } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Resizable } from "re-resizable";
@@ -41,6 +41,7 @@ import {
 import Link from "next/link";
 import { useTodoAppStore } from "@/store/todo-app";
 import { todoConfig as navList, type todoSet } from "../config";
+import { cn } from "@/lib/utils";
 
 // custom navList
 const customNavList: todoSet[] = [
@@ -70,7 +71,7 @@ function UserInfo() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex items-center gap-2.5 pb-2 ">
+        <div className="flex items-center gap-2.5 mb-2 px-2 ">
           <Avatar className="size-11">
             <AvatarImage src={user?.image || undefined} alt="User Avatar" />
           </Avatar>
@@ -139,11 +140,11 @@ export default function SidePannel({
     >
       <aside className="flex flex-col h-full w-full relative bg-white dark:bg-zinc-800">
         {/* 侧边栏内容 */}
-        <div className="h-full flex flex-col overflow-hidden px-3 pt-3 w-full relative">
+        <div className="h-full flex flex-col overflow-hidden px-1 pt-3 w-full relative">
           {/* 个人信息区 + 带图标的搜索框 */}
           <UserInfo />
-          <div className="flex flex-col">
-            <div className="relative mb-4">
+          <div className="flex flex-col px-2 mb-4">
+            <div className="relative">
               <Search
                 size={16}
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -157,7 +158,7 @@ export default function SidePannel({
           </div>
 
           {/* 导航菜单 */}
-          <nav className="flex-1 overflow-y-auto">
+          <nav className="flex-1 overflow-y-auto flex flex-col space-y-1">
             {navList.map((item) => (
               <button
                 key={item.id}
@@ -165,16 +166,21 @@ export default function SidePannel({
                   setActiveNav(item.id);
                   onSelectAction(item.id);
                 }}
-                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm transition-colors ${
+                className={cn(
+                  "w-full flex items-center gap-2.5 px-2 py-1.5 rounded-xs text-xs transition-colors",
                   activeNav === item.id
-                    ? "bg-gray-100 text-gray-800"
-                    : "bg-transparent text-gray-800 hover:bg-gray-100"
-                }`}
+                    ? "bg-gray-100 text-gray-800 dark:bg-zinc-700 dark:text-gray-200"
+                    : "bg-transparent text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-zinc-700",
+                )}
               >
-                {item.icon}
+                {/* {item.icon} */}
+                {cloneElement(item.icon, {
+                  size: 13,
+                  className: "text-gray-400",
+                })}
                 {item.label}
                 {item.count && (
-                  <span className="ml-auto text-xs text-gray-600 bg-gray-200 rounded-lg p-0.5">
+                  <span className="ml-auto text-xs text-gray-600 bg-gray-200 dark:bg-zinc-800 dark:text-gray-200 rounded-lg p-0.5">
                     {/* TODO: 这里应该是动态计算的任务数量 */}
                     {item.count}
                   </span>
@@ -210,14 +216,19 @@ export default function SidePannel({
 
         {/* 新建列表按钮 */}
 
-        <div className="flex justify-between w-full p-3 bg-white border-t">
-          <div className="flex items-center gap-2 rounded-md text-sm text-gray-800 hover:bg-gray-100">
+        <div className="flex w-full bg-white dark:bg-zinc-800 border-t">
+          <button
+            className={cn(
+              "flex-1 flex items-center gap-2 p-2 rounded-xs text-sm text-gray-800 dark:text-gray-200 ",
+              "dark:hover:bg-zinc-700",
+            )}
+          >
             <Plus size={16} />
             新建列表
-          </div>
-          <div className="px-2 mt-0.5">
+          </button>
+          <button className="px-2 h-full dark:hover:bg-zinc-700 rounded-xs">
             <FolderPlus size={16} />
-          </div>
+          </button>
         </div>
       </aside>
     </Resizable>

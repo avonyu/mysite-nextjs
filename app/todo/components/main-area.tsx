@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, cloneElement } from "react";
-import { Home, Plus, Circle } from "lucide-react";
+import { Plus, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TaskItem from "./task-item";
 import {
@@ -13,6 +13,23 @@ import reorder from "@/lib/utils/reorder";
 import { useTodoAppStore } from "@/store";
 import { type todoSet } from "../config";
 import SetCard from "./set-card";
+
+const getData = () => {
+  // 返回日期字符串，格式示例：2月1日，星期日
+  const date = new Date();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const week = [
+    "星期日",
+    "星期一",
+    "星期二",
+    "星期三",
+    "星期四",
+    "星期五",
+    "星期六",
+  ];
+  return `${month}月${day}日，${week[date.getDay()]}`;
+};
 
 function MainArea({ todoSet }: { todoSet: todoSet }) {
   const user = useTodoAppStore((state) => state.user);
@@ -57,18 +74,25 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
     >
       <div className="flex flex-col px-12 h-full">
         {/* 顶部导航栏 */}
-        {/* TODO: 我的一天Header适配 */}
-        <div className="flex items-center py-6">
-          {todoSet.icon &&
-            todoSet.id !== "today" &&
-            cloneElement(todoSet.icon, {
-              size: 24,
-              className: "text-white",
-            })}
-          <h1 className="text-white text-3xl font-semibold ml-2">
-            {todoSet.label}
-          </h1>
-        </div>
+        {todoSet.id === "today" ? (
+          <div className="py-6">
+            <h1 className="text-white text-3xl font-semibold ml-2">
+              {todoSet.label}
+            </h1>
+            <p className="text-white text-sm font-medium ml-2">{getData()}</p>
+          </div>
+        ) : (
+          <div className="flex items-center py-6">
+            {todoSet.icon &&
+              cloneElement(todoSet.icon, {
+                size: 24,
+                className: "text-white",
+              })}
+            <h1 className="text-white text-3xl font-semibold ml-2">
+              {todoSet.label}
+            </h1>
+          </div>
+        )}
 
         {/* 任务列表容器 */}
         <div

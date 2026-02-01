@@ -52,7 +52,7 @@ export default function TodoPage() {
   // if (loading) return <Loading />;
 
   return (
-    <div className="min-h-screen max-h-20 flex dark:bg-gray-900">
+    <div className="min-h-screen max-h-20 flex dark:bg-zinc-800">
       <SidePannel onSelectAction={setTodoSet} />
       <MainArea todoSet={defaultTodoSets.find((set) => set.id === todoSet) || defaultTodoSets[0]} />
     </div>
