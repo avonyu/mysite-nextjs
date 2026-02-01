@@ -122,13 +122,18 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
 
         {/* 添加任务按钮 */}
         <div className="pb-12 pt-2">
-          <div className="w-full flex items-center gap-2 px-3 py-3 border border-gray-300 bg-white/70 backdrop-blur text-gray-600 rounded text-sm hover:bg-white/80">
+          <div
+            className={cn(
+              "w-full flex items-center gap-2 px-3 py-3 border-0 bg-white/70 backdrop-blur text-gray-600 rounded text-sm hover:bg-white/80",
+              "dark:text-white dark:bg-zinc-800/70 dark:hover:bg-zinc-700/70",
+            )}
+          >
             <div className="relative w-5 h-5 flex items-center justify-center">
               <Circle
                 size={20}
                 strokeWidth={2}
                 className={cn(
-                  "absolute text-gray-800 pointer-events-none transition-all duration-200 transform",
+                  "absolute text-gray-800 dark:text-white pointer-events-none transition-all duration-200 transform",
                   isInputFocused ? "opacity-100" : "opacity-0",
                 )}
               />
@@ -136,7 +141,7 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
                 size={20}
                 strokeWidth={2}
                 className={cn(
-                  "absolute text-gray-800 transition-all duration-200 transform",
+                  "absolute text-gray-800 dark:text-white transition-all duration-200 transform",
                   isInputFocused ? "opacity-0" : "opacity-100",
                 )}
               />
@@ -147,7 +152,7 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
                 type="text"
                 name="content"
                 placeholder="添加任务"
-                className="w-full bg-transparent focus:outline-none"
+                className="w-full bg-transparent focus:outline-none placeholder:text-white focus:placeholder-transparent"
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
               />
