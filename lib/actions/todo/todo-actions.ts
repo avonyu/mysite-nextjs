@@ -49,7 +49,7 @@ export async function getAllTodoItemsByTodoSetId(userId: string | undefined, tod
   }
 }
 
-export async function changeTodoItem(todoId: string, input: TodoItem): Promise<Response<TodoItem>> {
+export async function changeTodoItem(todoId: string, input: Partial<Omit<TodoItem, "id">>): Promise<Response<TodoItem>> {
   try {
     const todoItem = await prisma.todoItem.update({
       where: {
