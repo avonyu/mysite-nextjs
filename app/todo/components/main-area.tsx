@@ -1,17 +1,35 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Home, Plus, Circle } from "lucide-react";
+import { useState, useRef, useEffect, cloneElement } from "react";
+import { Plus, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TaskItem from "./task-item";
 import {
   getAllTodoItemsByTodoSetId,
   createTodoItem,
 } from "@/lib/actions/todo/todo-actions";
-import { TodoItem } from "@/generated/prisma/client";
+import { type TodoItem } from "@/generated/prisma/client";
+import reorder from "@/lib/utils/reorder";
 import { useTodoAppStore } from "@/store";
 import { type todoSet } from "../config";
 import SetCard from "./set-card";
+
+const getData = () => {
+  // 返回日期字符串，格式示例：2月1日，星期日
+  const date = new Date();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const week = [
+    "星期日",
+    "星期一",
+    "星期二",
+    "星期三",
+    "星期四",
+    "星期五",
+    "星期六",
+  ];
+  return `${month}月${day}日，${week[date.getDay()]}`;
+};
 
 function MainArea({ todoSet }: { todoSet: todoSet }) {
   const user = useTodoAppStore((state) => state.user);
@@ -25,16 +43,16 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
     const content = formData.get("content") as string;
     if (!content.trim()) return; // 内容为空时，不处理
     const res = await createTodoItemWithUserId(formData);
-    if (res.code === 200) {
-      setTasks([...(res.data || []), ...tasks]);
+    if (res.code === 200 && res.data && res.data[0]) {
+      const newTask = res.data[0];
+      setTasks(reorder([...tasks, newTask]));
     }
   };
 
   useEffect(() => {
     if (!user?.id) return;
-    console.log("Fetch todo data for todo set", todoSet.id);
     getAllTodoItemsByTodoSetId(user.id, todoSet.id).then((res) => {
-      setTasks(res.data || []);
+      setTasks(reorder(res.data || []));
     });
   }, [todoSet.id, user]);
 
@@ -48,16 +66,33 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
       }}
       onClick={() => inputRef.current?.focus()}
       className={cn(
-        "w-full rounded-tl-md overflow-hidden",
-        "bg-[url(/todo-wallpapers/bg-6.png)] bg-cover bg-center",
+        "w-full rounded-tl-md overflow-hidden bg-cover bg-center transition-all duration-300 ease-in-out",
       )}
+      style={{
+        backgroundImage: `url(${todoSet.bgImg})`,
+      }}
     >
       <div className="flex flex-col px-12 h-full">
         {/* 顶部导航栏 */}
-        <div className="flex items-center py-6">
-          <Home size={24} className="text-white" />
-          <h1 className="text-white text-3xl font-semibold ml-2">任务</h1>
-        </div>
+        {todoSet.id === "today" ? (
+          <div className="py-6">
+            <h1 className="text-white text-3xl font-semibold ml-2">
+              {todoSet.label}
+            </h1>
+            <p className="text-white text-sm font-medium ml-2">{getData()}</p>
+          </div>
+        ) : (
+          <div className="flex items-center py-6">
+            {todoSet.icon &&
+              cloneElement(todoSet.icon, {
+                size: 24,
+                className: "text-white",
+              })}
+            <h1 className="text-white text-3xl font-semibold ml-2">
+              {todoSet.label}
+            </h1>
+          </div>
+        )}
 
         {/* 任务列表容器 */}
         <div
@@ -69,7 +104,17 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
         >
           {/* 任务卡片列表 */}
           {tasks.map((task) => (
-            <TaskItem task={task} key={task.id} />
+            <TaskItem
+              task={task}
+              key={task.id}
+              onUpdate={(updatedTask) => {
+                // 更新任务列表中的任务
+                const updatedTasks = tasks.map((t) =>
+                  t.id === updatedTask.id ? updatedTask : t,
+                );
+                setTasks(reorder(updatedTasks));
+              }}
+            />
           ))}
           {/* 提示卡片 */}
           {todoSet.card && tasks.length === 0 && <SetCard todoSet={todoSet} />}

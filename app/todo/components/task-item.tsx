@@ -4,13 +4,39 @@ import { cn } from "@/lib/utils";
 import { TodoItem } from "@/generated/prisma/client";
 import { changeTodoItem } from "@/lib/actions/todo/todo-actions";
 
-function TaskItem({ task, className }: { task: TodoItem; className?: string }) {
+function TaskItem({
+  task,
+  className,
+  onUpdate,
+}: {
+  task: TodoItem;
+  className?: string;
+  onUpdate?: (updatedTask: TodoItem) => void;
+}) {
   const [isStarred, setIsStarred] = useState(task.isImportant);
 
   // 星标切换功能
-  const toggleStar = (taskId: string) => {
-    changeTodoItem(taskId, { isImportant: !isStarred });
-    setIsStarred(!isStarred);
+  const toggleStar = async (taskId: string) => {
+    const newIsStarred = !isStarred;
+    setIsStarred(newIsStarred); // 乐观更新 UI
+
+    // 乐观更新：立即通知父组件进行排序（同时更新时间以模拟编辑后的置顶效果）
+    onUpdate?.({
+      ...task,
+      isImportant: newIsStarred,
+      updatedAt: new Date(),
+    });
+
+    // 更新数据库
+    const res = await changeTodoItem(taskId, { isImportant: newIsStarred });
+    if (res.code === 200 && res.data && res.data[0]) {
+      // 数据库更新成功后，再次确保数据一致性（主要是获取服务器端的准确 updatedAt）
+      onUpdate?.(res.data[0]);
+    } else {
+      // 如果失败，回滚状态
+      setIsStarred(!newIsStarred);
+      onUpdate?.(task);
+    }
   };
 
   return (

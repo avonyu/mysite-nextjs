@@ -1,10 +1,28 @@
 import { Sun, Star, SquareKanban, User, Flag, Home } from "lucide-react";
 import React from "react";
 
+enum BgColor {
+  darkblue = "darkblue",
+  darkpink = "darkpink",
+  darkred = "darkred",
+  darkorange = "darkorange",
+  darkgreen = "darkgreen",
+  darkteal = "darkteal",
+  darkgray = "darkgray",
+  blue = "blue",
+  pink = "pink",
+  red = "red",
+  orange = "orange",
+  green = "green",
+  teal = "teal",
+  gray = "gray",
+}
+
 export interface todoSet {
   id: string;
   label: string;
   icon: React.JSX.Element;
+  bgImg: string | BgColor;
   count?: number;
   card?: Card;
 }
@@ -20,6 +38,7 @@ export const todoConfig: todoSet[] = [
     id: "today",
     label: "我的一天",
     icon: <Sun size={16} />,
+    bgImg: "/todo-wallpapers/bg-1.png",
     card: {
       img: "/todo-set-imgs/today.png",
       title: "专注于你的一天",
@@ -30,6 +49,7 @@ export const todoConfig: todoSet[] = [
     id: "important",
     label: "重要",
     icon: <Star size={16} />,
+    bgImg: "/todo-wallpapers/bg-2.png",
     card: {
       img: "/todo-set-imgs/important.png",
       title: undefined,
@@ -40,6 +60,7 @@ export const todoConfig: todoSet[] = [
     id: "planned",
     label: "计划内",
     icon: <SquareKanban size={16} />,
+    bgImg: "/todo-wallpapers/bg-3.png",
     card: {
       img: "/todo-set-imgs/planned.png",
       title: undefined,
@@ -50,6 +71,7 @@ export const todoConfig: todoSet[] = [
     id: "assigned",
     label: "已分配给我",
     icon: <User size={16} />,
+    bgImg: "/todo-wallpapers/bg-4.png",
     card: {
       img: "/todo-set-imgs/assigned.png",
       title: undefined,
@@ -60,6 +82,7 @@ export const todoConfig: todoSet[] = [
     id: "flagged",
     label: "标记的电子邮件",
     icon: <Flag size={16} />,
+    bgImg: "/todo-wallpapers/bg-5.png",
     card: {
       img: "/todo-set-imgs/flagged.png",
       title: undefined,
@@ -70,6 +93,7 @@ export const todoConfig: todoSet[] = [
     id: "tasks",
     label: "任务",
     icon: <Home size={16} />,
+    bgImg: "/todo-wallpapers/bg-6.png",
     count: 22,
     card: {
       img: "/todo-set-imgs/flagged.png", // TODO: 待修改为tasks.png

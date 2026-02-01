@@ -34,9 +34,10 @@ export async function getAllTodoItemsByTodoSetId(userId: string | undefined, tod
         userId,
         todoSetId: todoSetId === "tasks" ? undefined : todoSetId, //  tasks集合用于获取所有的todoItem
       },
-      orderBy: {
-        updatedAt: 'desc',
-      },
+      orderBy: [
+        { isImportant: 'desc' },
+        { updatedAt: 'desc' },
+      ],
     });
 
     return {
