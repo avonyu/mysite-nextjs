@@ -20,6 +20,12 @@ export default function reorder(
     // 优先级 2: updatedAt
     const timeA = new Date(a.updatedAt).getTime();
     const timeB = new Date(b.updatedAt).getTime();
+
+    // 优先级 3：isFinish (asc)
+    if (a.isFinish !== b.isFinish) {
+      return a.isFinish ? 1 : -1; // false (-1) 排在前面
+    }
+
     return timeB - timeA; // 大的时间（较新）排在前面
   });
 

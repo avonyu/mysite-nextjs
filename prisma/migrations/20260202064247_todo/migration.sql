@@ -57,28 +57,45 @@ CREATE TABLE "verification" (
 );
 
 -- CreateTable
-CREATE TABLE "todo" (
+CREATE TABLE "todoItem" (
     "id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "isFinish" BOOLEAN NOT NULL DEFAULT false,
-    "priority" INTEGER NOT NULL DEFAULT 0,
+    "isImportant" BOOLEAN NOT NULL DEFAULT false,
+    "isToday" BOOLEAN NOT NULL DEFAULT false,
+    "todoSetId" TEXT,
     "dueDate" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
 
-    CONSTRAINT "todo_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "todoItem_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "test" (
-    "id" SERIAL NOT NULL,
+CREATE TABLE "todoSubstep" (
+    "id" TEXT NOT NULL,
     "content" TEXT NOT NULL,
-    "createAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updateAt" TIMESTAMP(3) NOT NULL,
+    "isFinish" BOOLEAN NOT NULL DEFAULT false,
+    "todoItemId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" TEXT NOT NULL,
 
-    CONSTRAINT "test_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "todoSubstep_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "todoSet" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "emoji" TEXT,
+    "bgImg" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "todoSet_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -94,7 +111,16 @@ ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "todo" ADD CONSTRAINT "todo_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "todoItem" ADD CONSTRAINT "todoItem_todoSetId_fkey" FOREIGN KEY ("todoSetId") REFERENCES "todoSet"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "test" ADD CONSTRAINT "test_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "todoItem" ADD CONSTRAINT "todoItem_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "todoSubstep" ADD CONSTRAINT "todoSubstep_todoItemId_fkey" FOREIGN KEY ("todoItemId") REFERENCES "todoItem"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "todoSubstep" ADD CONSTRAINT "todoSubstep_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "todoSet" ADD CONSTRAINT "todoSet_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

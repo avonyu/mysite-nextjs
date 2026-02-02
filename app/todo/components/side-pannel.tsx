@@ -40,33 +40,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { useTodoAppStore } from "@/store/todo-app";
-import { todoConfig as navList, type todoSet } from "../config";
+import { defaultTodoSet, customTodoSet, type TodoSet } from "../config";
 import { cn } from "@/lib/utils";
 
-// custom navList
-const customNavList: todoSet[] = [
-  {
-    id: "self-project",
-    label: "个人项目",
-    icon: <Computer size={16} />,
-    bgImg: "/bg-self-project.jpg",
-  },
-  {
-    id: "resuma",
-    label: "简历投递",
-    icon: <Briefcase size={16} />,
-    bgImg: "/bg-resume.jpg",
-  },
-  {
-    id: "work",
-    label: "工作",
-    icon: <Bookmark size={16} />,
-    bgImg: "/bg-work.jpg",
-  },
-];
-
 function UserInfo() {
-  // const { data: session } = useSession();
   const user = useTodoAppStore((state) => state.user);
   return (
     <DropdownMenu>
@@ -124,12 +101,41 @@ function UserInfo() {
   );
 }
 
-export default function SidePannel({
-  onSelectAction,
-}: {
-  onSelectAction: (id: string) => void;
-}) {
-  const [activeNav, setActiveNav] = useState("tasks");
+function TodoSet({ item }: { item: TodoSet }) {
+  const currentSetId = useTodoAppStore((state) => state.currentSetId);
+  const setCurrentSetId = useTodoAppStore((state) => state.setCurrentSetId);
+  return (
+    <button
+      key={item.id}
+      onClick={() => {
+        setCurrentSetId(item.id);
+      }}
+      className={cn(
+        "w-full flex items-center gap-2.5 px-2 py-1.5 rounded-xs text-xs transition-colors",
+        currentSetId === item.id
+          ? "bg-gray-100 text-gray-800 dark:bg-zinc-700 dark:text-gray-200"
+          : "bg-transparent text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-zinc-700",
+      )}
+    >
+      {/* {item.icon} */}
+      {cloneElement(item.icon, {
+        size: 13,
+        className: "text-gray-400",
+      })}
+      {item.label}
+      {item.count && (
+        <span className="ml-auto text-xs text-gray-600 bg-gray-200 dark:bg-zinc-800 dark:text-gray-200 rounded-lg p-0.5">
+          {/* TODO: 这里应该是动态计算的任务数量 */}
+          {item.count}
+        </span>
+      )}
+    </button>
+  );
+}
+
+export default function SidePannel() {
+  const currentSetId = useTodoAppStore((state) => state.currentSetId);
+  const setCurrentSetId = useTodoAppStore((state) => state.setCurrentSetId);
 
   return (
     <Resizable
@@ -159,45 +165,19 @@ export default function SidePannel({
 
           {/* 导航菜单 */}
           <nav className="flex-1 overflow-y-auto flex flex-col space-y-1">
-            {navList.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveNav(item.id);
-                  onSelectAction(item.id);
-                }}
-                className={cn(
-                  "w-full flex items-center gap-2.5 px-2 py-1.5 rounded-xs text-xs transition-colors",
-                  activeNav === item.id
-                    ? "bg-gray-100 text-gray-800 dark:bg-zinc-700 dark:text-gray-200"
-                    : "bg-transparent text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-zinc-700",
-                )}
-              >
-                {/* {item.icon} */}
-                {cloneElement(item.icon, {
-                  size: 13,
-                  className: "text-gray-400",
-                })}
-                {item.label}
-                {item.count && (
-                  <span className="ml-auto text-xs text-gray-600 bg-gray-200 dark:bg-zinc-800 dark:text-gray-200 rounded-lg p-0.5">
-                    {/* TODO: 这里应该是动态计算的任务数量 */}
-                    {item.count}
-                  </span>
-                )}
-              </button>
+            {defaultTodoSet.map((item) => (
+              <TodoSet key={item.id} item={item} />
             ))}
             <Separator />
             {/* 自定义菜单 */}
-            {customNavList.map((item) => (
+            {customTodoSet.map((item) => (
               <button
                 key={item.id}
                 onClick={() => {
-                  setActiveNav(item.id);
-                  onSelectAction(item.id);
+                  setCurrentSetId(item.id);
                 }}
                 className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm transition-colors ${
-                  activeNav === item.id
+                  currentSetId === item.id
                     ? "bg-gray-100"
                     : "bg-transparent text-gray-800 hover:bg-gray-100"
                 }`}

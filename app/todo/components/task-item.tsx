@@ -14,6 +14,7 @@ function TaskItem({
   onUpdate?: (updatedTask: TodoItem) => void;
 }) {
   const [isStarred, setIsStarred] = useState(task.isImportant);
+  const [isFinish, setIsFinish] = useState(task.isFinish);
 
   // 星标切换功能
   const toggleStar = async (taskId: string) => {
@@ -39,6 +40,30 @@ function TaskItem({
     }
   };
 
+  // 完成状态切换功能
+  const toggleFinish = async (taskId: string) => {
+    const newIsFinish = !isFinish;
+    setIsFinish(newIsFinish); // 乐观更新 UI
+
+    // 乐观更新：立即通知父组件进行排序（同时更新时间以模拟编辑后的置顶效果）
+    onUpdate?.({
+      ...task,
+      isFinish: newIsFinish,
+      updatedAt: new Date(),
+    });
+
+    // 更新数据库
+    const res = await changeTodoItem(taskId, { isFinish: newIsFinish });
+    if (res.code === 200 && res.data && res.data[0]) {
+      // 数据库更新成功后，再次确保数据一致性（主要是获取服务器端的准确 updatedAt）
+      onUpdate?.(res.data[0]);
+    } else {
+      // 如果失败，回滚状态
+      setIsFinish(!newIsFinish);
+      onUpdate?.(task);
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -50,6 +75,7 @@ function TaskItem({
       <div className="relative flex items-center justify-center">
         <input
           type="checkbox"
+          onChange={() => toggleFinish(task.id)}
           className={cn(
             "appearance-none size-4 rounded-full border-2 border-gray-500",
             "peer checked:bg-gray-500 checked:border-transparent checked:border-0",
@@ -67,7 +93,14 @@ function TaskItem({
         />
       </div>
       <div className="flex-1">
-        <div className="text-sm font-medium">{task.content}</div>
+        <div
+          className={cn(
+            "text-sm font-medium cursor-default",
+            isFinish ? "line-through text-gray-500" : "",
+          )}
+        >
+          {task.content}
+        </div>
         {task.isToday && (
           <div className="text-xs text-gray-600 dark:text-gray-200 flex items-center gap-1">
             <Sun size={12} /> 我的一天

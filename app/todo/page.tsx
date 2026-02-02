@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { authClient } from "@/lib/auth-client";
 import { Spinner } from "@/components/ui/spinner";
 // import { getAllTodoItems } from "@/lib/actions/todo/todo-actions";
 import SidePannel from "./components/side-pannel";
 import MainArea from "./components/main-area";
 import { useTodoAppStore } from "@/store";
-import { todoConfig as defaultTodoSets, type todoSet } from "./config";
+import { defaultTodoSet as defaultTodoSets, type TodoSet } from "./config";
 
 interface Todo {
   id: string;
@@ -37,7 +36,7 @@ function Loading() {
 export default function TodoPage() {
   const user = useTodoAppStore((state) => state.user);
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [todoSet, setTodoSet] = useState("today");
+  const [todoSet, setTodoSet] = useState("tasks");
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
@@ -53,8 +52,8 @@ export default function TodoPage() {
 
   return (
     <div className="min-h-screen max-h-20 flex dark:bg-zinc-800">
-      <SidePannel onSelectAction={setTodoSet} />
-      <MainArea todoSet={defaultTodoSets.find((set) => set.id === todoSet) || defaultTodoSets[0]} />
+      <SidePannel />
+      <MainArea />
     </div>
   );
 }

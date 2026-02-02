@@ -1,36 +1,35 @@
 import { create } from 'zustand'
 import { User } from '@/generated/prisma/client'
 import { persist } from 'zustand/middleware'
-import { type todoSet } from '@/app/todo/config'
+import { allTodoSets, type TodoSet } from '@/app/todo/config'
 
 type State = {
+  test: number,
   user: User | undefined
-  currentSet?: todoSet
+  currentSetId: string
 }
 
 type Actions = {
+  setTest: (test: number) => void
   setUser: (user: User | undefined) => void
-  setTodoSet: (currentSet: todoSet) => void
+  setCurrentSetId: (id: string) => void
+  getTodoSetById: (id: string) => TodoSet | undefined
 }
-
-// Example usage
-// export const useTodoAppStore = create<State & Actions>((set) => ({
-//   user: undefined,
-//   currentSet: "today",
-//   setUser: (user) => set({ user }),
-//   setTodoSet: (currentSet) => set({ currentSet: currentSet }),
-// }))
 
 export const useTodoAppStore = create<State & Actions>()(
   persist((set) => ({
+    test: 0,
     user: undefined,
-    currentSet: undefined,
+    currentSetId: "today",
     setUser: (user) => set({ user }),
-    setTodoSet: (currentSet) => set({ currentSet: currentSet }),
+    setCurrentSetId: (currentSetId) => set({ currentSetId }),
+    setTest: (test) => set({ test }),
+    getTodoSetById: (id) => allTodoSets.find((set) => set.id === id),
   }), {
     name: 'todo-app-store',
     partialize: (state) => ({
-      currentSet: state.currentSet,
+      currentSetId: state.currentSetId,
+      test: state.test,
     })
   })
 )

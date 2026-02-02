@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { type todoSet } from "../config";
+import { type TodoSet } from "../config";
 
-export default function SetCard({ todoSet }: { todoSet: todoSet }) {
+export default function SetCard({ todoSet }: { todoSet: TodoSet }) {
   return (
-    <Card className="w-55 rounded-md border-0 bg-stone-600/90 backdrop-blur gap-2 py-4">
+    <Card className="w-55 rounded-md border-0 bg-stone-600/80 backdrop-blur gap-2 py-4">
       <div className="flex justify-center my-4">
         <Image
           src={todoSet.card?.img as string}
@@ -22,7 +22,9 @@ export default function SetCard({ todoSet }: { todoSet: todoSet }) {
         </CardHeader>
       )}
       <CardContent className="px-4">
-        <p className="text-white text-xs text-center">{todoSet.card?.content}</p>
+        <p className="text-white text-xs text-center">
+          {todoSet.card?.content}
+        </p>
       </CardContent>
       {todoSet.id === "today" && (
         <div className="mx-8">

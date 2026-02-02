@@ -11,9 +11,13 @@ import {
 import { type TodoItem } from "@/generated/prisma/client";
 import reorder from "@/lib/utils/reorder";
 import { useTodoAppStore } from "@/store";
-import { type todoSet } from "../config";
 import SetCard from "./set-card";
+import { defaultTodoSet } from "../config";
 
+/**
+ * 获取当前日期的字符串表示
+ * @returns 日期和星期的字符串表示
+ */
 const getData = () => {
   // 返回日期字符串，格式示例：2月1日，星期日
   const date = new Date();
@@ -31,8 +35,12 @@ const getData = () => {
   return `${month}月${day}日，${week[date.getDay()]}`;
 };
 
-function MainArea({ todoSet }: { todoSet: todoSet }) {
+// TODO: 提升tasks状态
+function MainArea() {
   const user = useTodoAppStore((state) => state.user);
+  const currentSetId = useTodoAppStore((state) => state.currentSetId);
+  const getTodoSetById = useTodoAppStore((state) => state.getTodoSetById);
+  const currentSet = getTodoSetById(currentSetId) || defaultTodoSet[0];
   const [tasks, setTasks] = useState<TodoItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -51,10 +59,10 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
 
   useEffect(() => {
     if (!user?.id) return;
-    getAllTodoItemsByTodoSetId(user.id, todoSet.id).then((res) => {
+    getAllTodoItemsByTodoSetId(user.id, currentSet.id).then((res) => {
       setTasks(reorder(res.data || []));
     });
-  }, [todoSet.id, user]);
+  }, [currentSet.id, user]);
 
   return (
     <main
@@ -69,27 +77,27 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
         "w-full rounded-tl-md overflow-hidden bg-cover bg-center transition-all duration-300 ease-in-out",
       )}
       style={{
-        backgroundImage: `url(${todoSet.bgImg})`,
+        backgroundImage: `url(${currentSet.bgImg})`,
       }}
     >
       <div className="flex flex-col px-12 h-full">
         {/* 顶部导航栏 */}
-        {todoSet.id === "today" ? (
+        {currentSet.id === "today" ? (
           <div className="py-6">
             <h1 className="text-white text-3xl font-semibold ml-2">
-              {todoSet.label}
+              {currentSet.label}
             </h1>
             <p className="text-white text-sm font-medium ml-2">{getData()}</p>
           </div>
         ) : (
           <div className="flex items-center py-6">
-            {todoSet.icon &&
-              cloneElement(todoSet.icon, {
+            {currentSet.icon &&
+              cloneElement(currentSet.icon, {
                 size: 24,
                 className: "text-white",
               })}
             <h1 className="text-white text-3xl font-semibold ml-2">
-              {todoSet.label}
+              {currentSet.label}
             </h1>
           </div>
         )}
@@ -117,7 +125,9 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
             />
           ))}
           {/* 提示卡片 */}
-          {todoSet.card && tasks.length === 0 && <SetCard todoSet={todoSet} />}
+          {currentSet.card && tasks.length === 0 && (
+            <SetCard todoSet={currentSet} />
+          )}
         </div>
 
         {/* 添加任务按钮 */}
@@ -152,7 +162,7 @@ function MainArea({ todoSet }: { todoSet: todoSet }) {
                 type="text"
                 name="content"
                 placeholder="添加任务"
-                className="w-full bg-transparent focus:outline-none placeholder:text-white focus:placeholder-transparent"
+                className="w-full bg-transparent text-black placeholder:text-gray-800 dark:placeholder:text-white focus:outline-none focus:placeholder-transparent"
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
               />

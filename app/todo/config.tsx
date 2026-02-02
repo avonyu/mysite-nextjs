@@ -1,4 +1,14 @@
-import { Sun, Star, SquareKanban, User, Flag, Home } from "lucide-react";
+import {
+  Sun,
+  Star,
+  SquareKanban,
+  User,
+  Flag,
+  Home,
+  Computer,
+  Briefcase,
+  Bookmark,
+} from "lucide-react";
 import React from "react";
 
 enum BgColor {
@@ -18,7 +28,7 @@ enum BgColor {
   gray = "gray",
 }
 
-export interface todoSet {
+export interface TodoSet {
   id: string;
   label: string;
   icon: React.JSX.Element;
@@ -33,7 +43,7 @@ interface Card {
   content: string;
 }
 
-export const todoConfig: todoSet[] = [
+export const defaultTodoSet: TodoSet[] = [
   {
     id: "today",
     label: "我的一天",
@@ -102,3 +112,26 @@ export const todoConfig: todoSet[] = [
     },
   },
 ];
+
+export const customTodoSet: TodoSet[] = [
+  {
+    id: "self-project",
+    label: "个人项目",
+    icon: <Computer size={16} />,
+    bgImg: "/bg-self-project.jpg",
+  },
+  {
+    id: "resuma",
+    label: "简历投递",
+    icon: <Briefcase size={16} />,
+    bgImg: "/bg-resume.jpg",
+  },
+  {
+    id: "work",
+    label: "工作",
+    icon: <Bookmark size={16} />,
+    bgImg: "/bg-work.jpg",
+  },
+];
+
+export const allTodoSets = [...defaultTodoSet, ...customTodoSet];
