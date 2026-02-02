@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { Response } from '../types'
-import { type TodoItem } from "@/generated/prisma/client"
+import { type TodoItem, Prisma } from "@/generated/prisma/client"
 
 export async function createTodoItem(userId: string | undefined, formData: FormData): Promise<Response<TodoItem>> {
   try {
@@ -26,14 +26,28 @@ export async function createTodoItem(userId: string | undefined, formData: FormD
   }
 }
 
-export async function getAllTodoItemsByTodoSetId(userId: string | undefined, todoSetId?: string): Promise<Response<TodoItem>> {
+export async function getAllTodoItemsBySetId(userId: string | undefined, todoSetId?: string): Promise<Response<TodoItem>> {
   try {
     if (!userId) throw new Error("userId is undefined.")
+
+    const where: Prisma.TodoItemWhereInput = {
+      userId,
+    };
+
+    if (todoSetId === "today") {
+      where.isToday = true;
+    } else if (todoSetId === "important") {
+      where.isImportant = true;
+    } else if (todoSetId === "tasks") {
+      // tasks集合用于获取所有的todoItem
+    } else if (todoSetId === "planned") {
+      where.dueDate = { not: null };
+    } else if (todoSetId && !["assigned", "flagged"].includes(todoSetId)) {
+      where.todoSetId = todoSetId;
+    }
+
     const todoItems = await prisma.todoItem.findMany({
-      where: {
-        userId,
-        todoSetId: todoSetId === "tasks" ? undefined : todoSetId, //  tasks集合用于获取所有的todoItem
-      },
+      where,
       orderBy: [
         { isImportant: 'desc' },
         { updatedAt: 'desc' },

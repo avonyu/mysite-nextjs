@@ -5,7 +5,7 @@ import { Plus, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TaskItem from "./task-item";
 import {
-  getAllTodoItemsByTodoSetId,
+  getAllTodoItemsBySetId,
   createTodoItem,
 } from "@/lib/actions/todo/todo-actions";
 import { type TodoItem } from "@/generated/prisma/client";
@@ -41,6 +41,7 @@ function MainArea() {
   const currentSetId = useTodoAppStore((state) => state.currentSetId);
   const getTodoSetById = useTodoAppStore((state) => state.getTodoSetById);
   const currentSet = getTodoSetById(currentSetId) || defaultTodoSet[0];
+
   const [tasks, setTasks] = useState<TodoItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -59,7 +60,7 @@ function MainArea() {
 
   useEffect(() => {
     if (!user?.id) return;
-    getAllTodoItemsByTodoSetId(user.id, currentSet.id).then((res) => {
+    getAllTodoItemsBySetId(user.id, currentSet.id).then((res) => {
       setTasks(reorder(res.data || []));
     });
   }, [currentSet.id, user]);
@@ -124,6 +125,7 @@ function MainArea() {
               }}
             />
           ))}
+
           {/* 提示卡片 */}
           {currentSet.card && tasks.length === 0 && (
             <SetCard todoSet={currentSet} />
@@ -131,43 +133,49 @@ function MainArea() {
         </div>
 
         {/* 添加任务按钮 */}
-        <div className="pb-12 pt-2">
-          <div
-            className={cn(
-              "w-full flex items-center gap-2 px-3 py-3 border-0 bg-white/70 backdrop-blur text-gray-600 rounded text-sm hover:bg-white/80",
-              "dark:text-white dark:bg-zinc-800/70 dark:hover:bg-zinc-700/70",
-            )}
-          >
-            <div className="relative w-5 h-5 flex items-center justify-center">
-              <Circle
-                size={20}
-                strokeWidth={2}
-                className={cn(
-                  "absolute text-gray-800 dark:text-white pointer-events-none transition-all duration-200 transform",
-                  isInputFocused ? "opacity-100" : "opacity-0",
-                )}
-              />
-              <Plus
-                size={20}
-                strokeWidth={2}
-                className={cn(
-                  "absolute text-gray-800 dark:text-white transition-all duration-200 transform",
-                  isInputFocused ? "opacity-0" : "opacity-100",
-                )}
-              />
+        <div className="mt-2 h-20">
+          {currentSet.id !== "assigned" && currentSet.id !== "flagged" && (
+            <div
+              className={cn(
+                "w-full flex items-center gap-2 px-3 py-3 border-0 bg-white/70 backdrop-blur text-gray-600 rounded text-sm hover:bg-white/80",
+                "dark:text-white dark:bg-zinc-800/70 dark:hover:bg-zinc-700/70",
+              )}
+            >
+              <div className="relative w-5 h-5 flex items-center justify-center">
+                <Circle
+                  size={20}
+                  strokeWidth={2}
+                  className={cn(
+                    "absolute text-gray-800 dark:text-white pointer-events-none transition-all duration-200 transform",
+                    isInputFocused ? "opacity-100" : "opacity-0",
+                  )}
+                />
+                <Plus
+                  size={20}
+                  strokeWidth={2}
+                  className={cn(
+                    "absolute text-gray-800 dark:text-white transition-all duration-200 transform",
+                    isInputFocused ? "opacity-0" : "opacity-100",
+                  )}
+                />
+              </div>
+              <form action={handleCreateTodo} className="flex-1">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  name="content"
+                  placeholder="添加任务"
+                  className={cn(
+                    "w-full bg-transparent text-black dark:text-white",
+                    "placeholder:text-gray-800 dark:placeholder:text-white",
+                    "focus:outline-none focus:placeholder-transparent dark:focus:placeholder-transparent",
+                  )}
+                  onFocus={() => setIsInputFocused(true)}
+                  onBlur={() => setIsInputFocused(false)}
+                />
+              </form>
             </div>
-            <form action={handleCreateTodo} className="flex-1">
-              <input
-                ref={inputRef}
-                type="text"
-                name="content"
-                placeholder="添加任务"
-                className="w-full bg-transparent text-black placeholder:text-gray-800 dark:placeholder:text-white focus:outline-none focus:placeholder-transparent"
-                onFocus={() => setIsInputFocused(true)}
-                onBlur={() => setIsInputFocused(false)}
-              />
-            </form>
-          </div>
+          )}
         </div>
       </div>
     </main>

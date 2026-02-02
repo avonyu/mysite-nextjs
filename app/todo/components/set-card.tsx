@@ -16,7 +16,7 @@ export default function SetCard({ todoSet }: { todoSet: TodoSet }) {
       </div>
       {todoSet.card?.title && (
         <CardHeader>
-          <CardTitle className="text-white text-xl">
+          <CardTitle className="text-white text-xl text-center">
             {todoSet.card.title}
           </CardTitle>
         </CardHeader>
@@ -28,7 +28,7 @@ export default function SetCard({ todoSet }: { todoSet: TodoSet }) {
       </CardContent>
       {todoSet.id === "today" && (
         <div className="mx-8">
-          <Button variant="secondary" size="sm" className="w-full text-xs">
+          <Button variant="secondary" size="sm" className="w-full text-xs rounded-sm h-6.5">
             向“我的一天”添加任务
           </Button>
         </div>

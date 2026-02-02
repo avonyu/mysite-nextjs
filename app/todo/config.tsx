@@ -47,7 +47,7 @@ export const defaultTodoSet: TodoSet[] = [
   {
     id: "today",
     label: "我的一天",
-    icon: <Sun size={16} />,
+    icon: <Sun />,
     bgImg: "/todo-wallpapers/bg-1.png",
     card: {
       img: "/todo-set-imgs/today.png",
@@ -58,7 +58,7 @@ export const defaultTodoSet: TodoSet[] = [
   {
     id: "important",
     label: "重要",
-    icon: <Star size={16} />,
+    icon: <Star />,
     bgImg: "/todo-wallpapers/bg-2.png",
     card: {
       img: "/todo-set-imgs/important.png",
@@ -69,7 +69,7 @@ export const defaultTodoSet: TodoSet[] = [
   {
     id: "planned",
     label: "计划内",
-    icon: <SquareKanban size={16} />,
+    icon: <SquareKanban />,
     bgImg: "/todo-wallpapers/bg-3.png",
     card: {
       img: "/todo-set-imgs/planned.png",
@@ -80,7 +80,7 @@ export const defaultTodoSet: TodoSet[] = [
   {
     id: "assigned",
     label: "已分配给我",
-    icon: <User size={16} />,
+    icon: <User />,
     bgImg: "/todo-wallpapers/bg-4.png",
     card: {
       img: "/todo-set-imgs/assigned.png",
@@ -91,7 +91,7 @@ export const defaultTodoSet: TodoSet[] = [
   {
     id: "flagged",
     label: "标记的电子邮件",
-    icon: <Flag size={16} />,
+    icon: <Flag />,
     bgImg: "/todo-wallpapers/bg-5.png",
     card: {
       img: "/todo-set-imgs/flagged.png",
@@ -102,7 +102,7 @@ export const defaultTodoSet: TodoSet[] = [
   {
     id: "tasks",
     label: "任务",
-    icon: <Home size={16} />,
+    icon: <Home />,
     bgImg: "/todo-wallpapers/bg-6.png",
     count: 22,
     card: {
@@ -117,19 +117,19 @@ export const customTodoSet: TodoSet[] = [
   {
     id: "self-project",
     label: "个人项目",
-    icon: <Computer size={16} />,
+    icon: <Computer />,
     bgImg: "/bg-self-project.jpg",
   },
   {
     id: "resuma",
     label: "简历投递",
-    icon: <Briefcase size={16} />,
+    icon: <Briefcase />,
     bgImg: "/bg-resume.jpg",
   },
   {
     id: "work",
     label: "工作",
-    icon: <Bookmark size={16} />,
+    icon: <Bookmark />,
     bgImg: "/bg-work.jpg",
   },
 ];
