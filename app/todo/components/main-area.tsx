@@ -117,6 +117,13 @@ function MainArea() {
               task={task}
               key={task.id}
               onUpdate={(updatedTask) => {
+                // 如果是重要任务，且取消了重要性，从任务列表中移除
+                if (currentSet.id === "important" && !updatedTask.isImportant) {
+                  setTasks(
+                    reorder(tasks.filter((t) => t.id !== updatedTask.id)),
+                  );
+                  return;
+                }
                 // 更新任务列表中的任务
                 const updatedTasks = tasks.map((t) =>
                   t.id === updatedTask.id ? updatedTask : t,

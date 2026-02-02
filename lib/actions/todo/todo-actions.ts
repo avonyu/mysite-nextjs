@@ -42,7 +42,7 @@ export async function getAllTodoItemsBySetId(userId: string | undefined, todoSet
       // tasks集合用于获取所有的todoItem
     } else if (todoSetId === "planned") {
       where.dueDate = { not: null };
-    } else if (todoSetId && !["assigned", "flagged"].includes(todoSetId)) {
+    } else {
       where.todoSetId = todoSetId;
     }
 
