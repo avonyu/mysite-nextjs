@@ -75,6 +75,7 @@ function TaskItem({
       <div className="relative flex items-center justify-center">
         <input
           type="checkbox"
+          checked={isFinish}
           onChange={() => toggleFinish(task.id)}
           className={cn(
             "appearance-none size-4 rounded-full border-2 border-gray-500",
