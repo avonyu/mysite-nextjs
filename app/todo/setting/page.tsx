@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
@@ -39,10 +39,52 @@ import {
   Heart,
 } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
+import { useTheme } from "next-themes";
+
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="space-y-4">
+      <h3 className="text-lg font-medium text-muted-foreground">{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+function ThemeSetting() {
+  const { theme, setTheme } = useTheme();
+  return (
+    <Section title="主题">
+      <RadioGroup value={theme} onValueChange={setTheme} className="space-y-2">
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="light" id="theme-light" />
+          <Label htmlFor="theme-light" className="cursor-pointer">
+            浅色主题
+          </Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="dark" id="theme-dark" />
+          <Label htmlFor="theme-dark" className="cursor-pointer">
+            深色主题
+          </Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="system" id="theme-system" />
+          <Label htmlFor="theme-system" className="cursor-pointer">
+            使用系统 Windows 主题
+          </Label>
+        </div>
+      </RadioGroup>
+    </Section>
+  );
+}
 
 export default function TodoSettingPage() {
-  const router = useRouter();
-
   // State for settings
   const [settings, setSettings] = useState({
     diagnosticDataRequired: false,
@@ -67,11 +109,11 @@ export default function TodoSettingPage() {
 
   const [weekStart, setWeekStart] = useState("系统默认");
   const [badgeCount, setBadgeCount] = useState("今天到期的逾期");
-  const [theme, setTheme] = useState("system"); // light, dark, system
 
   const toggleSetting = (key: keyof typeof settings) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
   const { data: session } = useSession();
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-8">
@@ -104,30 +146,28 @@ export default function TodoSettingPage() {
       <Separator />
 
       {/* General Section */}
-      <section className="space-y-4">
-        <h3 className="text-lg font-medium text-muted-foreground">常规</h3>
-
-        <SettingItem
+      <Section title="常规">
+        <SettingItemVertical
           label="在顶部添加新任务"
           checked={settings.addNewToTop}
           onCheckedChange={() => toggleSetting("addNewToTop")}
         />
-        <SettingItem
+        <SettingItemVertical
           label="将带有星标的任务移至顶部"
           checked={settings.moveStarredToTop}
           onCheckedChange={() => toggleSetting("moveStarredToTop")}
         />
-        <SettingItem
+        <SettingItemVertical
           label="播放完成提示音"
           checked={settings.playCompletionSound}
           onCheckedChange={() => toggleSetting("playCompletionSound")}
         />
-        <SettingItem
+        <SettingItemVertical
           label="右键单击菜单"
           checked={settings.contextMenu}
           onCheckedChange={() => toggleSetting("contextMenu")}
         />
-        <SettingItem
+        <SettingItemVertical
           label="保持 Windows 启动时自动启动待办事项"
           checked={settings.autoStart}
           onCheckedChange={() => toggleSetting("autoStart")}
@@ -201,157 +241,103 @@ export default function TodoSettingPage() {
         <Button variant="link" className="p-0 h-auto text-blue-500">
           键盘快捷方式
         </Button>
-      </section>
+      </Section>
 
       <Separator />
 
       {/* Theme Section */}
-      <section className="space-y-4">
-        <h3 className="text-lg font-medium text-muted-foreground">主题</h3>
-        <div className="space-y-2">
-          <div
-            className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => setTheme("light")}
-          >
-            <div
-              className={`w-4 h-4 rounded-full border flex items-center justify-center ${theme === "light" ? "border-blue-500" : "border-muted-foreground"}`}
-            >
-              {theme === "light" && (
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-              )}
-            </div>
-            <Label className="cursor-pointer">浅色主题</Label>
-          </div>
-          <div
-            className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => setTheme("dark")}
-          >
-            <div
-              className={`w-4 h-4 rounded-full border flex items-center justify-center ${theme === "dark" ? "border-blue-500" : "border-muted-foreground"}`}
-            >
-              {theme === "dark" && (
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-              )}
-            </div>
-            <Label className="cursor-pointer">深色主题</Label>
-          </div>
-          <div
-            className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => setTheme("system")}
-          >
-            <div
-              className={`w-4 h-4 rounded-full border flex items-center justify-center ${theme === "system" ? "border-blue-500" : "border-muted-foreground"}`}
-            >
-              {theme === "system" && (
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-              )}
-            </div>
-            <Label className="cursor-pointer">使用系统 Windows 主题</Label>
-          </div>
-        </div>
-      </section>
-
+      <ThemeSetting />
       <Separator />
 
       {/* Smart Lists Section */}
-      <section className="space-y-4">
-        <h3 className="text-lg font-medium text-muted-foreground">智能列表</h3>
-
-        <SettingItem
-          icon={<Star className="h-4 w-4 text-purple-400" />}
+      <Section title="智能列表">
+        <SettingItemHorizontal
+          icon={<Star className="size-5 text-blue-500" />}
           label="重要"
           checked={settings.smartListImportant}
           onCheckedChange={() => toggleSetting("smartListImportant")}
         />
-        <SettingItem
-          icon={<Calendar className="h-4 w-4 text-green-400" />}
+        <SettingItemHorizontal
+          icon={<Calendar className="size-5 text-blue-500" />}
           label="计划内"
           checked={settings.smartListPlanned}
           onCheckedChange={() => toggleSetting("smartListPlanned")}
         />
-        <SettingItem
-          icon={<User className="h-4 w-4 text-green-400" />}
-          label="已分配给我"
-          checked={settings.smartListAssigned}
-          onCheckedChange={() => toggleSetting("smartListAssigned")}
-        />
-        <SettingItem
-          icon={<Infinity className="h-4 w-4 text-gray-400" />}
-          label="全部"
-          checked={settings.smartListAll}
-          onCheckedChange={() => toggleSetting("smartListAll")}
-        />
-        <SettingItem
-          icon={<Check className="h-4 w-4 text-gray-400" />}
+        <SettingItemHorizontal
+          icon={<Check className="size-5 text-blue-500" />}
           label="已完成"
           checked={settings.smartListCompleted}
           onCheckedChange={() => toggleSetting("smartListCompleted")}
         />
+        <SettingItemHorizontal
+          icon={<Infinity className="size-5 text-blue-500" />}
+          label="全部"
+          checked={settings.smartListAll}
+          onCheckedChange={() => toggleSetting("smartListAll")}
+        />
+        <SettingItemHorizontal
+          icon={<User className="size-5 text-blue-500" />}
+          label="已分配给我"
+          checked={settings.smartListAssigned}
+          onCheckedChange={() => toggleSetting("smartListAssigned")}
+        />
 
         <div className="pt-2">
-          <SettingItem
+          <SettingItemHorizontal
             label="自动隐藏空的智能列表"
             checked={settings.autoHideEmptySmartLists}
             onCheckedChange={() => toggleSetting("autoHideEmptySmartLists")}
           />
         </div>
         <div className="pt-2">
-          <SettingItem
+          <SettingItemHorizontal
             label="在我的“一天”视图中显示今天截止的任务"
             checked={settings.showTodayTasks}
             onCheckedChange={() => toggleSetting("showTodayTasks")}
           />
         </div>
-      </section>
+      </Section>
 
       <Separator />
 
       {/* Connected Apps */}
-      <section className="space-y-4">
-        <h3 className="text-lg font-medium text-muted-foreground">
-          连接的应用
-        </h3>
-        <SettingItem
+      <Section title="连接的应用">
+        <SettingItemHorizontal
           icon={<Wrench className="h-4 w-4 text-green-500" />}
           label="Planner"
           subLabel="在 Planner 中分配给你的任务"
           checked={settings.connectedPlanner}
           onCheckedChange={() => toggleSetting("connectedPlanner")}
         />
-        <SettingItem
+        <SettingItemHorizontal
           icon={<Flag className="h-4 w-4 text-blue-400" />}
           label="标记的电子邮件"
           subLabel="你存 Outlook 中已标记的电子邮件中的任务"
           checked={settings.connectedEmail}
           onCheckedChange={() => toggleSetting("connectedEmail")}
         />
-      </section>
+      </Section>
 
       <Separator />
 
       {/* Notifications */}
-      <section className="space-y-4">
-        <h3 className="text-lg font-medium text-muted-foreground">通知</h3>
-        <SettingItem
+      <Section title="通知">
+        <SettingItemVertical
           label="提醒"
           checked={settings.notificationsReminders}
           onCheckedChange={() => toggleSetting("notificationsReminders")}
         />
-        <SettingItem
+        <SettingItemVertical
           label="已共享列表活动"
           checked={settings.notificationsShared}
           onCheckedChange={() => toggleSetting("notificationsShared")}
         />
-      </section>
+      </Section>
 
       <Separator />
 
       {/* Help & Feedback */}
-      <section className="space-y-4">
-        <h3 className="text-lg font-medium text-muted-foreground">
-          帮助和反馈
-        </h3>
-
+      <Section title="帮助和反馈">
         <div className="flex items-start space-x-2 text-sm text-yellow-500 bg-yellow-500/10 p-3 rounded-md">
           <Info className="h-5 w-5 shrink-0" />
           <div>
@@ -392,13 +378,12 @@ export default function TodoSettingPage() {
             复制会话和用户 ID
           </Button>
         </div>
-      </section>
+      </Section>
 
       <Separator />
 
       {/* Connect */}
-      <section className="space-y-4">
-        <h3 className="text-lg font-medium text-muted-foreground">连接</h3>
+      <Section title="连接">
         <div className="space-y-4">
           <div className="flex items-center space-x-3 text-blue-500 cursor-pointer hover:underline">
             <Twitter className="h-6 w-6 fill-current" />
@@ -413,14 +398,12 @@ export default function TodoSettingPage() {
             <span>广而告之</span>
           </div>
         </div>
-      </section>
+      </Section>
 
       <Separator />
 
       {/* About */}
-      <section className="space-y-4">
-        <h3 className="text-lg font-medium text-muted-foreground">关于</h3>
-
+      <Section title="关于">
         <div className="flex flex-col space-y-2">
           <Button
             variant="link"
@@ -479,7 +462,7 @@ export default function TodoSettingPage() {
             了解有关可选诊断数据的详细信息
           </Button>
         </div>
-      </section>
+      </Section>
 
       <Separator />
 
@@ -493,8 +476,7 @@ export default function TodoSettingPage() {
   );
 }
 
-// Helper component for settings items
-function SettingItem({
+function SettingItemHorizontal({
   icon,
   label,
   subLabel,
@@ -518,7 +500,47 @@ function SettingItem({
           )}
         </div>
       </div>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} />
+      <Switch
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        // className="data-[state=checked]:bg-teal-700"
+      />
+    </div>
+  );
+}
+
+function SettingItemVertical({
+  icon,
+  label,
+  subLabel,
+  checked,
+  onCheckedChange,
+}: {
+  icon?: React.ReactNode;
+  label: string;
+  subLabel?: string;
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2 justify-between py-1">
+      <div className="flex items-center space-x-3">
+        {icon && <div className="shrink-0">{icon}</div>}
+        <div className="flex flex-col">
+          <Label className="text-base font-normal">{label}</Label>
+          {subLabel && (
+            <span className="text-xs text-muted-foreground">{subLabel}</span>
+          )}
+        </div>
+      </div>
+      <div className="flex gap-2 items-center">
+        <Switch
+          checked={checked}
+          onCheckedChange={onCheckedChange}
+          // className="data-[state=checked]:bg-teal-700"
+        />
+        {checked ? "开" : "关"}
+      </div>
     </div>
   );
 }

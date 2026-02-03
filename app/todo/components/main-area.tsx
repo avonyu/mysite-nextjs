@@ -38,11 +38,13 @@ const getData = () => {
 // TODO: 提升tasks状态
 function MainArea() {
   const user = useTodoAppStore((state) => state.user);
+  const tasks = useTodoAppStore((state) => state.tasks);
+  const setTasks = useTodoAppStore((state) => state.setTasks);
   const currentSetId = useTodoAppStore((state) => state.currentSetId);
   const getTodoSetById = useTodoAppStore((state) => state.getTodoSetById);
   const currentSet = getTodoSetById(currentSetId) || defaultTodoSet[0];
 
-  const [tasks, setTasks] = useState<TodoItem[]>([]);
+  // const [tasks, setTasks] = useState<TodoItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const createTodoItemWithUserId = createTodoItem.bind(null, user?.id);
@@ -63,7 +65,7 @@ function MainArea() {
     getAllTodoItemsBySetId(user.id, currentSet.id).then((res) => {
       setTasks(reorder(res.data || []));
     });
-  }, [currentSet.id, user]);
+  }, [currentSet.id, user, setTasks]);
 
   return (
     <main

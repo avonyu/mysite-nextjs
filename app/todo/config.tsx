@@ -104,7 +104,6 @@ export const defaultTodoSet: TodoSet[] = [
     label: "任务",
     icon: <Home />,
     bgImg: "/todo-wallpapers/bg-6.png",
-    count: 22,
     card: {
       img: "/todo-set-imgs/flagged.png", // TODO: 待修改为tasks.png
       title: undefined,

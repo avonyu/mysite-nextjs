@@ -102,6 +102,7 @@ function UserInfo() {
 }
 
 function TodoSet({ item }: { item: TodoSet }) {
+  const tasks = useTodoAppStore((state) => state.tasks);
   const currentSetId = useTodoAppStore((state) => state.currentSetId);
   const setCurrentSetId = useTodoAppStore((state) => state.setCurrentSetId);
   return (
@@ -147,8 +148,9 @@ export default function SidePannel() {
       <aside className="flex flex-col h-full w-full relative bg-white dark:bg-zinc-800">
         {/* 侧边栏内容 */}
         <div className="h-full flex flex-col overflow-hidden px-1 pt-3 w-full relative">
-          {/* 个人信息区 + 带图标的搜索框 */}
+          {/* 个人信息区 */}
           <UserInfo />
+          {/*  带图标的搜索框 */}
           <div className="flex flex-col px-2 mb-4">
             <div className="relative">
               <Search
@@ -195,18 +197,20 @@ export default function SidePannel() {
         </div>
 
         {/* 新建列表按钮 */}
-
         <div className="flex w-full bg-white dark:bg-zinc-800 border-t">
           <button
+            onClick={() => {
+              setCurrentSetId("custom");
+            }}
             className={cn(
-              "flex-1 flex items-center gap-2 p-2 rounded-xs text-sm text-gray-800 dark:text-gray-200 ",
-              "dark:hover:bg-zinc-700",
+              "flex-1 flex items-center gap-2 p-2 rounded-sm text-sm text-gray-800 dark:text-gray-200 ",
+              "hover:bg-gray-100 dark:hover:bg-zinc-700",
             )}
           >
             <Plus size={16} />
             新建列表
           </button>
-          <button className="px-2 h-full dark:hover:bg-zinc-700 rounded-xs">
+          <button className="px-2 h-full hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-sm">
             <FolderPlus size={16} />
           </button>
         </div>
