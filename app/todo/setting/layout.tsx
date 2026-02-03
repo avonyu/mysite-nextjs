@@ -14,7 +14,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => router.back()}
+          onClick={() => router.push("/todo")}
           className="mr-2"
         >
           <ChevronLeft className="h-5 w-5" />

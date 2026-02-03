@@ -87,7 +87,7 @@ export async function changeTodoItem(todoId: string, input: Partial<Omit<TodoIte
 
 export async function deleteTodoItem(todoId: string): Promise<Response<TodoItem>> {
   try {
-    await prisma.todoItem.delete({
+    const deletedTodoItem = await prisma.todoItem.delete({
       where: {
         id: todoId,
       },
@@ -96,7 +96,7 @@ export async function deleteTodoItem(todoId: string): Promise<Response<TodoItem>
     return {
       message: 'Todo item deleted successfully',
       code: 200,
-      data: [],
+      data: [deletedTodoItem],
     };
   } catch (error) {
     throw new Error(`Failed to delete todo item: ${error}`);

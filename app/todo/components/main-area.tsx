@@ -67,6 +67,20 @@ function MainArea() {
     });
   }, [currentSet.id, user, setTasks]);
 
+  const handleTaskUpdate = (updatedTask: TodoItem) => {
+    // 检查是否应该从当前列表中移除任务
+    const shouldRemove =
+      (currentSet.id === "important" && !updatedTask.isImportant) ||
+      (currentSet.id === "today" && !updatedTask.isToday);
+
+    if (shouldRemove) {
+      setTasks(reorder(tasks.filter((t) => t.id !== updatedTask.id)));
+    } else {
+      setTasks(
+        reorder(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t))),
+      );
+    }
+  };
   return (
     <main
       onMouseDown={(e) => {
@@ -118,19 +132,9 @@ function MainArea() {
             <TaskItem
               task={task}
               key={task.id}
-              onUpdate={(updatedTask) => {
-                // 如果是重要任务，且取消了重要性，从任务列表中移除
-                if (currentSet.id === "important" && !updatedTask.isImportant) {
-                  setTasks(
-                    reorder(tasks.filter((t) => t.id !== updatedTask.id)),
-                  );
-                  return;
-                }
-                // 更新任务列表中的任务
-                const updatedTasks = tasks.map((t) =>
-                  t.id === updatedTask.id ? updatedTask : t,
-                );
-                setTasks(reorder(updatedTasks));
+              onUpdate={handleTaskUpdate}
+              onDelete={(deletedTask) => {
+                setTasks(reorder(tasks.filter((t) => t.id !== deletedTask.id)));
               }}
             />
           ))}

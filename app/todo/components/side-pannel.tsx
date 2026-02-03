@@ -137,6 +137,11 @@ function TodoSet({ item }: { item: TodoSet }) {
 export default function SidePannel() {
   const currentSetId = useTodoAppStore((state) => state.currentSetId);
   const setCurrentSetId = useTodoAppStore((state) => state.setCurrentSetId);
+  const [customTodoSet, setCustomTodoSet] = useState<TodoSet[]>([]);
+
+  const createNewTodoSet = () => {
+    // 乐观更新
+  };
 
   return (
     <Resizable
@@ -173,25 +178,7 @@ export default function SidePannel() {
             <Separator />
             {/* 自定义菜单 */}
             {customTodoSet.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setCurrentSetId(item.id);
-                }}
-                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm transition-colors ${
-                  currentSetId === item.id
-                    ? "bg-gray-100"
-                    : "bg-transparent text-gray-800 hover:bg-gray-100"
-                }`}
-              >
-                {item.icon}
-                {item.label}
-                {item.count && (
-                  <span className="ml-auto text-xs text-gray-600 bg-gray-200 rounded-lg p-0.5">
-                    {item.count}
-                  </span>
-                )}
-              </button>
+              <TodoSet key={item.id} item={item} />
             ))}
           </nav>
         </div>
@@ -200,7 +187,7 @@ export default function SidePannel() {
         <div className="flex w-full bg-white dark:bg-zinc-800 border-t">
           <button
             onClick={() => {
-              setCurrentSetId("custom");
+              createNewTodoSet();
             }}
             className={cn(
               "flex-1 flex items-center gap-2 p-2 rounded-sm text-sm text-gray-800 dark:text-gray-200 ",

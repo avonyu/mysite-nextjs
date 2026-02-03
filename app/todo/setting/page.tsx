@@ -49,7 +49,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="space-y-4">
+    <section className="space-y-3">
       <h3 className="text-lg font-medium text-muted-foreground">{title}</h3>
       {children}
     </section>
