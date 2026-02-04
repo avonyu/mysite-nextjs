@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useOptimistic, startTransition } from "react";
 import { Star, Check, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TodoItem } from "@/generated/prisma/client";
@@ -30,16 +30,19 @@ function TaskItem({
   onUpdate?: (updatedTask: TodoItem) => void;
   onDelete?: (deletedTask: TodoItem) => void;
 }) {
-  const [isStarred, setIsStarred] = useState(task.isImportant);
-  const [isFinish, setIsFinish] = useState(task.isFinish);
-  const [isToday, setIsToday] = useState(task.isToday);
+  const [optimisticTask, setOptimisticTask] = useOptimistic(
+    task,
+    (state, changes: Partial<TodoItem>) => ({ ...state, ...changes }),
+  );
 
   // 星标切换功能
   const toggleStar = async (taskId: string) => {
-    const newIsStarred = !isStarred;
-    setIsStarred(newIsStarred); // 乐观更新 UI
+    const newIsStarred = !optimisticTask.isImportant;
+    startTransition(() => {
+      setOptimisticTask({ isImportant: newIsStarred, updatedAt: new Date() });
+    });
 
-    // 乐观更新：立即通知父组件进行排序（同时更新时间以模拟编辑后的置顶效果）
+    // 乐观更新：立即通知父组件进行排序
     onUpdate?.({
       ...task,
       isImportant: newIsStarred,
@@ -49,21 +52,22 @@ function TaskItem({
     // 更新数据库
     const res = await changeTodoItem(taskId, { isImportant: newIsStarred });
     if (res.code === 200 && res.data && res.data[0]) {
-      // 数据库更新成功后，再次确保数据一致性（主要是获取服务器端的准确 updatedAt）
+      // 数据库更新成功后，同步最新数据
       onUpdate?.(res.data[0]);
     } else {
-      // 如果失败，回滚状态
-      setIsStarred(!newIsStarred);
+      // 失败时，父组件回滚（useOptimistic 会自动处理本地 UI 回滚）
       onUpdate?.(task);
     }
   };
 
   // 完成状态切换功能
   const toggleFinish = async (taskId: string) => {
-    const newIsFinish = !isFinish;
-    setIsFinish(newIsFinish); // 乐观更新 UI
+    const newIsFinish = !optimisticTask.isFinish;
+    startTransition(() => {
+      setOptimisticTask({ isFinish: newIsFinish, updatedAt: new Date() });
+    });
 
-    // 乐观更新：立即通知父组件进行排序（同时更新时间以模拟编辑后的置顶效果）
+    // 乐观更新：立即通知父组件进行排序
     onUpdate?.({
       ...task,
       isFinish: newIsFinish,
@@ -73,19 +77,20 @@ function TaskItem({
     // 更新数据库
     const res = await changeTodoItem(taskId, { isFinish: newIsFinish });
     if (res.code === 200 && res.data && res.data[0]) {
-      // 数据库更新成功后，再次确保数据一致性（主要是获取服务器端的准确 updatedAt）
       onUpdate?.(res.data[0]);
     } else {
-      // 如果失败，回滚状态
-      setIsFinish(!newIsFinish);
       onUpdate?.(task);
     }
   };
+
   // 添加到“我的一天”切换功能
   const toggleToday = async (taskId: string) => {
-    const newIsToday = !isToday;
-    setIsToday(newIsToday);
-    // 乐观更新 UI
+    const newIsToday = !optimisticTask.isToday;
+    startTransition(() => {
+      setOptimisticTask({ isToday: newIsToday, updatedAt: new Date() });
+    });
+
+    // 乐观更新：立即通知父组件
     onUpdate?.({
       ...task,
       isToday: newIsToday,
@@ -95,11 +100,8 @@ function TaskItem({
     // 更新数据库
     const res = await changeTodoItem(taskId, { isToday: newIsToday });
     if (res.code === 200 && res.data && res.data[0]) {
-      // 数据库更新成功后，再次确保数据一致性（主要是获取服务器端的准确 updatedAt）
       onUpdate?.(res.data[0]);
     } else {
-      // 如果失败，回滚状态
-      setIsToday(!newIsToday);
       onUpdate?.(task);
     }
   };
@@ -112,11 +114,12 @@ function TaskItem({
     // 更新数据库
     const res = await deleteTodoItem(taskId);
     if (res.code === 200) {
-      // 数据库删除成功后，确保 UI 同步
       onDelete?.(res.data[0]);
     } else {
       // 如果失败，回滚状态
-      onDelete?.(task);
+      // 注意：由于组件已被父组件卸载，这里的代码可能不会执行，
+      // 但如果父组件正确处理了回滚（重新挂载），则无需在此处做额外操作
+      // 此处逻辑主要依赖父组件的状态管理
     }
   };
   return (
@@ -132,7 +135,7 @@ function TaskItem({
           <div className="relative flex items-center justify-center">
             <input
               type="checkbox"
-              checked={isFinish}
+              checked={optimisticTask.isFinish}
               onChange={() => toggleFinish(task.id)}
               className={cn(
                 "appearance-none size-4 rounded-full border-2 border-gray-500",
@@ -154,12 +157,12 @@ function TaskItem({
             <div
               className={cn(
                 "text-sm font-medium cursor-default",
-                isFinish ? "line-through text-gray-500" : "",
+                optimisticTask.isFinish ? "line-through text-gray-500" : "",
               )}
             >
               {task.content}
             </div>
-            {isToday && (
+            {optimisticTask.isToday && (
               <div className="text-xs text-gray-600 dark:text-gray-200 flex items-center gap-1">
                 <Sun size={12} /> 我的一天
               </div>
@@ -171,8 +174,8 @@ function TaskItem({
           >
             <Star
               size={16}
-              fill={isStarred ? "#6a7282" : "none"}
-              className={isStarred ? "text-gray-500" : ""}
+              fill={optimisticTask.isImportant ? "#6a7282" : "none"}
+              className={optimisticTask.isImportant ? "text-gray-500" : ""}
             />
           </button>
         </div>

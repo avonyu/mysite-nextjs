@@ -186,6 +186,9 @@ function MainArea() {
                   onFocus={() => setIsInputFocused(true)}
                   onBlur={() => setIsInputFocused(false)}
                 />
+                {currentSetId === "important" && (
+                  <input type="hidden" name="isImportant" value={1} />
+                )}
               </form>
             </div>
           )}
