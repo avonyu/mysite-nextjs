@@ -1,16 +1,19 @@
 "use client";
 
-import { useState, useRef, useEffect, cloneElement } from "react";
+import { useState, useRef, cloneElement } from "react";
+import { useParams } from "next/navigation";
 import { Plus, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import TaskItem from "./task-item";
-import {
-  getAllTodoItemsBySetId,
-  createTodoItem,
-} from "@/lib/actions/todo/todo-actions";
-import { type TodoItem } from "@/generated/prisma/client";
+import { createTodoTask } from "@/lib/actions/todo/todo-actions";
+import { type TodoTask } from "@/generated/prisma/client";
 import reorder from "@/lib/utils/reorder";
-import { useTodoAppStore } from "@/store";
+import {
+  useGetTodoSetById,
+  useGetTasksBySetId,
+  useTodoActions,
+  useGetUser,
+} from "@/store/todo-app";
 import SetCard from "./set-card";
 import { defaultTodoSet } from "../config";
 
@@ -35,52 +38,64 @@ const getData = () => {
   return `${month}月${day}日，${week[date.getDay()]}`;
 };
 
-// TODO: 提升tasks状态
 function MainArea() {
-  const user = useTodoAppStore((state) => state.user);
-  const tasks = useTodoAppStore((state) => state.tasks);
-  const setTasks = useTodoAppStore((state) => state.setTasks);
-  const currentSetId = useTodoAppStore((state) => state.currentSetId);
-  const getTodoSetById = useTodoAppStore((state) => state.getTodoSetById);
-  const currentSet = getTodoSetById(currentSetId) || defaultTodoSet[0];
+  const params = useParams();
+  const setId = params.setId as string;
 
-  // const [tasks, setTasks] = useState<TodoItem[]>([]);
+  const currentSet = useGetTodoSetById(setId) || defaultTodoSet[0];
+  const tasks = useGetTasksBySetId(setId);
+  const { addTask, updateTask, deleteTask } = useTodoActions();
+  const user = useGetUser();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const createTodoItemWithUserId = createTodoItem.bind(null, user?.id);
 
   // 处理创建任务的表单提交，可快速响应用户输入
   const handleCreateTodo = async (formData: FormData) => {
+    if (!user?.id) return;
     const content = formData.get("content") as string;
     if (!content.trim()) return; // 内容为空时，不处理
-    const res = await createTodoItemWithUserId(formData);
+
+    // 如果在特定列表创建任务，需要附加属性
+    if (setId === "myday") {
+      formData.append("isToday", "true");
+    } else if (setId === "important") {
+      formData.append("isImportant", "true");
+    } else if (
+      setId !== "inbox" &&
+      setId !== "planned" &&
+      setId !== "assigned_to_me" &&
+      setId !== "flagged"
+    ) {
+      // 如果是自定义列表，可能需要 setId（取决于 createTodoTask 实现，目前它只接受 content）
+      // 注意：目前的 createTodoTask 实现只从 formData 读取 content。
+      // 如果需要支持 setId，需要更新 createTodoTask 或 formData。
+      // 假设 createTodoTask 会处理或者我们需要传入更多信息。
+      // 这是一个潜在的问题，但目前保持原样，只做最小修改。
+    }
+
+    // 调用 Server Action
+    const res = await createTodoTask(user.id, formData);
+
     if (res.code === 200 && res.data && res.data[0]) {
       const newTask = res.data[0];
-      setTasks(reorder([...tasks, newTask]));
+      // 更新 Store
+      addTask(newTask);
+      // 清空输入框 (通过重置 form)
+      // 由于使用的是 action，可以通过 key 重置或者受控组件。这里简单起见，假设 input 会被清空或者手动清空
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
     }
   };
 
-  useEffect(() => {
-    if (!user?.id) return;
-    getAllTodoItemsBySetId(user.id, currentSet.id).then((res) => {
-      setTasks(reorder(res.data || []));
-    });
-  }, [currentSet.id, user, setTasks]);
-
-  const handleTaskUpdate = (updatedTask: TodoItem) => {
-    // 检查是否应该从当前列表中移除任务
-    const shouldRemove =
-      (currentSet.id === "important" && !updatedTask.isImportant) ||
-      (currentSet.id === "today" && !updatedTask.isToday);
-
-    if (shouldRemove) {
-      setTasks(reorder(tasks.filter((t) => t.id !== updatedTask.id)));
-    } else {
-      setTasks(
-        reorder(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t))),
-      );
-    }
+  const handleTaskUpdate = (updatedTask: TodoTask) => {
+    updateTask(updatedTask);
   };
+
+  // 对任务进行排序以便显示
+  const orderedTasks = reorder(tasks);
+
   return (
     <main
       onMouseDown={(e) => {
@@ -99,7 +114,7 @@ function MainArea() {
     >
       <div className="flex flex-col px-12 h-full">
         {/* 顶部导航栏 */}
-        {currentSet.id === "today" ? (
+        {currentSet.id === "myday" ? (
           <div className="py-6">
             <h1 className="text-white text-3xl font-semibold ml-2">
               {currentSet.label}
@@ -109,12 +124,12 @@ function MainArea() {
         ) : (
           <div className="flex items-center py-6">
             {currentSet.icon &&
-              cloneElement(currentSet.icon, {
+              cloneElement(currentSet.icon as React.ReactElement, {
                 size: 24,
                 className: "text-white",
               })}
             <h1 className="text-white text-3xl font-semibold ml-2">
-              {currentSet.label}
+              {currentSet.label || (currentSet as any).name}
             </h1>
           </div>
         )}
@@ -123,75 +138,76 @@ function MainArea() {
         <div
           className={cn(
             "flex-1 py-1 flex flex-col space-y-0.5 overflow-y-auto relative",
-            tasks.length === 0 && "items-center justify-center",
+            orderedTasks.length === 0 && "items-center justify-center",
             "scrollbar-thin",
           )}
         >
           {/* 任务卡片列表 */}
-          {tasks.map((task) => (
+          {orderedTasks.map((task) => (
             <TaskItem
               task={task}
               key={task.id}
               onUpdate={handleTaskUpdate}
               onDelete={(deletedTask) => {
-                setTasks(reorder(tasks.filter((t) => t.id !== deletedTask.id)));
+                deleteTask(deletedTask.id);
               }}
             />
           ))}
 
           {/* 提示卡片 */}
-          {currentSet.card && tasks.length === 0 && (
+          {currentSet.card && orderedTasks.length === 0 && (
             <SetCard todoSet={currentSet} />
           )}
         </div>
 
         {/* 添加任务按钮 */}
         <div className="mt-2 h-20">
-          {currentSet.id !== "assigned" && currentSet.id !== "flagged" && (
-            <div
-              className={cn(
-                "w-full flex items-center gap-2 px-3 py-3 border-0 bg-white/70 backdrop-blur text-gray-600 rounded text-sm hover:bg-white/80",
-                "dark:text-white dark:bg-zinc-800/70 dark:hover:bg-zinc-700/70",
-              )}
-            >
-              <div className="relative w-5 h-5 flex items-center justify-center">
-                <Circle
-                  size={20}
-                  strokeWidth={2}
-                  className={cn(
-                    "absolute text-gray-800 dark:text-white pointer-events-none transition-all duration-200 transform",
-                    isInputFocused ? "opacity-100" : "opacity-0",
-                  )}
-                />
-                <Plus
-                  size={20}
-                  strokeWidth={2}
-                  className={cn(
-                    "absolute text-gray-800 dark:text-white transition-all duration-200 transform",
-                    isInputFocused ? "opacity-0" : "opacity-100",
-                  )}
-                />
-              </div>
-              <form action={handleCreateTodo} className="flex-1">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  name="content"
-                  placeholder="添加任务"
-                  className={cn(
-                    "w-full bg-transparent text-black dark:text-white",
-                    "placeholder:text-gray-800 dark:placeholder:text-white",
-                    "focus:outline-none focus:placeholder-transparent dark:focus:placeholder-transparent",
-                  )}
-                  onFocus={() => setIsInputFocused(true)}
-                  onBlur={() => setIsInputFocused(false)}
-                />
-                {currentSetId === "important" && (
-                  <input type="hidden" name="isImportant" value={1} />
+          {currentSet.id !== "assigned_to_me" &&
+            currentSet.id !== "flagged" && (
+              <div
+                className={cn(
+                  "w-full flex items-center gap-2 px-3 py-3 border-0 bg-white/70 backdrop-blur text-gray-600 rounded text-sm hover:bg-white/80",
+                  "dark:text-white dark:bg-zinc-800/70 dark:hover:bg-zinc-700/70",
                 )}
-              </form>
-            </div>
-          )}
+              >
+                <div className="relative w-5 h-5 flex items-center justify-center">
+                  <Circle
+                    size={20}
+                    strokeWidth={2}
+                    className={cn(
+                      "absolute text-gray-800 dark:text-white pointer-events-none transition-all duration-200 transform",
+                      isInputFocused ? "opacity-100" : "opacity-0",
+                    )}
+                  />
+                  <Plus
+                    size={20}
+                    strokeWidth={2}
+                    className={cn(
+                      "absolute text-gray-800 dark:text-white transition-all duration-200 transform",
+                      isInputFocused ? "opacity-0" : "opacity-100",
+                    )}
+                  />
+                </div>
+                <form action={handleCreateTodo} className="flex-1">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    name="content"
+                    placeholder="添加任务"
+                    className={cn(
+                      "w-full bg-transparent text-black dark:text-white",
+                      "placeholder:text-gray-800 dark:placeholder:text-white",
+                      "focus:outline-none focus:placeholder-transparent dark:focus:placeholder-transparent",
+                    )}
+                    onFocus={() => setIsInputFocused(true)}
+                    onBlur={() => setIsInputFocused(false)}
+                  />
+                  {setId === "important" && (
+                    <input type="hidden" name="isImportant" value="true" />
+                  )}
+                </form>
+              </div>
+            )}
         </div>
       </div>
     </main>

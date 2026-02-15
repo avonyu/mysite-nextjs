@@ -28,7 +28,7 @@ enum BgColor {
   gray = "gray",
 }
 
-export interface TodoSet {
+export interface DefaultSet {
   id: string;
   label: string;
   icon: React.JSX.Element;
@@ -43,9 +43,9 @@ interface Card {
   content: string;
 }
 
-export const defaultTodoSet: TodoSet[] = [
+export const defaultTodoSet: DefaultSet[] = [
   {
-    id: "today",
+    id: "myday",
     label: "我的一天",
     icon: <Sun />,
     bgImg: "/todo-wallpapers/bg-1.png",
@@ -78,7 +78,7 @@ export const defaultTodoSet: TodoSet[] = [
     },
   },
   {
-    id: "assigned",
+    id: "assigned_to_me",
     label: "已分配给我",
     icon: <User />,
     bgImg: "/todo-wallpapers/bg-4.png",
@@ -100,7 +100,7 @@ export const defaultTodoSet: TodoSet[] = [
     },
   },
   {
-    id: "tasks",
+    id: "inbox",
     label: "任务",
     icon: <Home />,
     bgImg: "/todo-wallpapers/bg-6.png",
@@ -111,26 +111,3 @@ export const defaultTodoSet: TodoSet[] = [
     },
   },
 ];
-
-export const customTodoSet: TodoSet[] = [
-  {
-    id: "self-project",
-    label: "个人项目",
-    icon: <Computer />,
-    bgImg: "/bg-self-project.jpg",
-  },
-  {
-    id: "resuma",
-    label: "简历投递",
-    icon: <Briefcase />,
-    bgImg: "/bg-resume.jpg",
-  },
-  {
-    id: "work",
-    label: "工作",
-    icon: <Bookmark />,
-    bgImg: "/bg-work.jpg",
-  },
-];
-
-export const allTodoSets = [...defaultTodoSet, ...customTodoSet];

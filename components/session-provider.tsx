@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "@/lib/auth-client";
-import { useTodoAppStore } from "@/store/todo-app";
+import { useTodoActions } from "@/store/todo-app";
 import { useEffect } from "react";
 
 export default function SessionProvider({
@@ -10,7 +10,7 @@ export default function SessionProvider({
   children: React.ReactNode;
 }) {
   const { data: session, isPending } = useSession();
-  const setUser = useTodoAppStore((state) => state.setUser);
+  const setUser = useTodoActions().setUser;
 
   useEffect(() => {
     // 只有当 session 加载完成且不处于 pending 状态时才更新 store

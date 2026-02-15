@@ -1,49 +1,42 @@
 "use server"
 
 import prisma from "@/lib/prisma";
+import { type TodoSet } from "@/generated/prisma/client";
+import { Response } from "../types";
 
-export interface TodoSet {
-  id: number;
-  name: string;
-  userId: string;
-}
-
-export interface TodoSetInput {
-  name: string;
-  emoji?: string;
-  bgImg?: string;
-  userId: string;
-}
-
-export interface TodoSetResponse {
-  id: number;
-  name: string;
-  emoji?: string;
-  bgImg?: string;
-  userId: string;
-}
-
-export interface Response {
-  message: string;
-  code: number; // 200: success, 400: bad request, 500: internal server error
-  data: TodoSet | null;
-}
-
-export async function createTodoSet(input: TodoSet): Promise<Response> {
+export async function createTodoSet(userId: string, name: string): Promise<Response<TodoSet>> {
   try {
     const todoSet = await prisma.todoSet.create({
       data: {
-        name: input.name,
-        userId: input.userId,
+        name: name,
+        userId: userId,
       },
     });
 
     return {
       message: 'Todo set created successfully',
       code: 200,
-      data: todoSet,
+      data: [todoSet],
     };
   } catch (error) {
     throw new Error(`Failed to create todo set: ${error}`);
+  }
+}
+
+export async function getAllTodoSets(userId: string): Promise<Response<TodoSet>> {
+  try {
+    const todoSets = await prisma.todoSet.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    return {
+      message: 'Todo sets fetched successfully',
+      code: 200,
+      data: todoSets,
+    };
+  } catch (error) {
+    throw new Error(`Failed to fetch todo sets: ${error}`);
   }
 }

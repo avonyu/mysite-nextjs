@@ -1,10 +1,10 @@
 import { useState, useOptimistic, startTransition } from "react";
 import { Star, Check, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { TodoItem } from "@/generated/prisma/client";
+import { TodoTask } from "@/generated/prisma/client";
 import {
-  changeTodoItem,
-  deleteTodoItem,
+  changeTodoTask,
+  deleteTodoTask,
 } from "@/lib/actions/todo/todo-actions";
 import {
   ContextMenu,
@@ -25,14 +25,14 @@ function TaskItem({
   onUpdate,
   onDelete,
 }: {
-  task: TodoItem;
+  task: TodoTask;
   className?: string;
-  onUpdate?: (updatedTask: TodoItem) => void;
-  onDelete?: (deletedTask: TodoItem) => void;
+  onUpdate?: (updatedTask: TodoTask) => void;
+  onDelete?: (deletedTask: TodoTask) => void;
 }) {
   const [optimisticTask, setOptimisticTask] = useOptimistic(
     task,
-    (state, changes: Partial<TodoItem>) => ({ ...state, ...changes }),
+    (state, changes: Partial<TodoTask>) => ({ ...state, ...changes }),
   );
 
   // 星标切换功能
@@ -50,7 +50,7 @@ function TaskItem({
     });
 
     // 更新数据库
-    const res = await changeTodoItem(taskId, { isImportant: newIsStarred });
+    const res = await changeTodoTask(taskId, { isImportant: newIsStarred });
     if (res.code === 200 && res.data && res.data[0]) {
       // 数据库更新成功后，同步最新数据
       onUpdate?.(res.data[0]);
@@ -75,7 +75,7 @@ function TaskItem({
     });
 
     // 更新数据库
-    const res = await changeTodoItem(taskId, { isFinish: newIsFinish });
+    const res = await changeTodoTask(taskId, { isFinish: newIsFinish });
     if (res.code === 200 && res.data && res.data[0]) {
       onUpdate?.(res.data[0]);
     } else {
@@ -98,7 +98,7 @@ function TaskItem({
     });
 
     // 更新数据库
-    const res = await changeTodoItem(taskId, { isToday: newIsToday });
+    const res = await changeTodoTask(taskId, { isToday: newIsToday });
     if (res.code === 200 && res.data && res.data[0]) {
       onUpdate?.(res.data[0]);
     } else {
@@ -112,7 +112,7 @@ function TaskItem({
     onDelete?.(task);
 
     // 更新数据库
-    const res = await deleteTodoItem(taskId);
+    const res = await deleteTodoTask(taskId);
     if (res.code === 200) {
       onDelete?.(res.data[0]);
     } else {

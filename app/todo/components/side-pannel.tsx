@@ -39,16 +39,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { useTodoAppStore } from "@/store/todo-app";
-import { defaultTodoSet, customTodoSet, type TodoSet } from "../config";
+import { useGetUser, useGetSets } from "@/store/todo-app";
+import { defaultTodoSet } from "../config";
 import { cn } from "@/lib/utils";
+import { TodoSet, TodoCustomSet } from "./sets";
 
 function UserInfo() {
-  const user = useTodoAppStore((state) => state.user);
+  const user = useGetUser();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex items-center gap-2.5 mb-2 px-2 ">
+        <div className="flex items-center gap-2.5 mb-2 px-2 cursor-default">
           <Avatar className="size-11">
             <AvatarImage src={user?.image || undefined} alt="User Avatar" />
           </Avatar>
@@ -101,44 +102,7 @@ function UserInfo() {
   );
 }
 
-function TodoSet({ item }: { item: TodoSet }) {
-  const tasks = useTodoAppStore((state) => state.tasks);
-  const currentSetId = useTodoAppStore((state) => state.currentSetId);
-  const setCurrentSetId = useTodoAppStore((state) => state.setCurrentSetId);
-  return (
-    <button
-      key={item.id}
-      onClick={() => {
-        setCurrentSetId(item.id);
-      }}
-      className={cn(
-        "w-full flex items-center gap-2.5 px-2 py-1.5 rounded-xs text-xs transition-colors",
-        currentSetId === item.id
-          ? "bg-gray-100 text-gray-800 dark:bg-zinc-700 dark:text-gray-200"
-          : "bg-transparent text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-zinc-700",
-      )}
-    >
-      {/* {item.icon} */}
-      {cloneElement(item.icon, {
-        size: 13,
-        className: "text-gray-400",
-      })}
-      {item.label}
-      {item.count && (
-        <span className="ml-auto text-xs text-gray-600 bg-gray-200 dark:bg-zinc-800 dark:text-gray-200 rounded-lg p-0.5">
-          {/* TODO: 这里应该是动态计算的任务数量 */}
-          {item.count}
-        </span>
-      )}
-    </button>
-  );
-}
-
 export default function SidePannel() {
-  const currentSetId = useTodoAppStore((state) => state.currentSetId);
-  const setCurrentSetId = useTodoAppStore((state) => state.setCurrentSetId);
-  const [customTodoSet, setCustomTodoSet] = useState<TodoSet[]>([]);
-
   const createNewTodoSet = () => {
     // 乐观更新
   };
@@ -177,8 +141,8 @@ export default function SidePannel() {
             ))}
             <Separator />
             {/* 自定义菜单 */}
-            {customTodoSet.map((item) => (
-              <TodoSet key={item.id} item={item} />
+            {useGetSets().map((item) => (
+              <TodoCustomSet key={item.id} item={item} />
             ))}
           </nav>
         </div>
