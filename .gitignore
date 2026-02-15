@@ -72,5 +72,18 @@ pids
 # Yarn Integrity file
 .yarn-integrity
 
+# Database
+*.db
+
 # Prisma Client
 /generated/prisma
+
+# AI Agents
+/.agents/
+/.trae/
+/.claude/
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

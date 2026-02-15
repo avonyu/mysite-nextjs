@@ -10,23 +10,23 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 // 用户管理
 model User {
-  id             String        @id
-  name           String
-  email          String
-  emailVerified  Boolean       @default(false)
-  image          String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @default(now()) @updatedAt
-  sessions       Session[]
-  accounts       Account[]
-  todoItem       TodoItem[]
-  todoCategories TodoSet[]
-  todoSubsteps   TodoSubstep[]
+  id            String         @id
+  name          String
+  email         String
+  emailVerified Boolean        @default(false)
+  image         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  tasks         TodoTask[]
+  sets          TodoSet[]
+  taskSteps     TodoTaskStep[]
 
   @@unique([email])
   @@map("user")
@@ -78,42 +78,42 @@ model Verification {
 }
 
 // Todo app
-model TodoItem {
-  id          String        @id @default(cuid(2))
+model TodoTask {
+  id          String        @id
   content     String
-  isFinish    Boolean       @default(false)
-  isImportant Boolean       @default(false)
-  isToday     Boolean       @default(false)
-  todoSetId   String?
-  todoSet     TodoSet?      @relation(fields: [todoSetId], references: [id], onDelete: Cascade)
+  isFinish    Boolean        @default(false)
+  isImportant Boolean        @default(false)
+  isToday     Boolean        @default(false)
+  setId       String?
+  set         TodoSet?       @relation(fields: [setId], references: [id], onDelete: Cascade)
   dueDate     DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
   userId      String
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  substeps    TodoSubstep[]
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  substeps    TodoTaskStep[]
 
-  @@map("todoItem")
+  @@map("tasks")
 }
 
 // substep
-model TodoSubstep {
-  id         String   @id @default(cuid(2))
-  content    String
-  isFinish   Boolean  @default(false)
-  todoItemId String
-  todoItem   TodoItem @relation(fields: [todoItemId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model TodoTaskStep {
+  id        String   @id
+  content   String
+  isFinish  Boolean  @default(false)
+  taskId    String
+  task      TodoTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("todoSubstep")
+  @@map("taskSubstep")
 }
 
 // customed todo sets
 model TodoSet {
-  id        String     @id @default(cuid(2))
+  id        String     @id
   name      String
   emoji     String?
   bgImg     String?
@@ -121,7 +121,7 @@ model TodoSet {
   updatedAt DateTime   @default(now()) @updatedAt
   userId    String
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  todoItems TodoItem[]
+  tasks     TodoTask[]
 
-  @@map("todoSet")
+  @@map("set")
 }

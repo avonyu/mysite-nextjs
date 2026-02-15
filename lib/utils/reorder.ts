@@ -1,4 +1,4 @@
-import { type TodoItem } from "@/generated/prisma/client";
+import { type TodoTask } from "@/generated/prisma/client";
 
 /**
  * 对任务列表进行排序，优先级：isImportant (desc) -> updatedAt (desc)
@@ -6,7 +6,7 @@ import { type TodoItem } from "@/generated/prisma/client";
  * @returns 排序后的任务列表
  */
 export default function reorder(
-  tasks: TodoItem[],
+  tasks: TodoTask[],
 ) {
   const sortedTasks = [...tasks];
 

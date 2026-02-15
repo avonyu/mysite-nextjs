@@ -38,7 +38,6 @@ export default function LoginPage() {
 
   async function onSubmit(formData: SignInData) {
     // "use server";
-    console.log(formData);
   }
 
   return (
