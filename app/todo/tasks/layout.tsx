@@ -11,7 +11,7 @@ export default function TodoLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const router = useRouter();
   const { fetchInitialData } = useTodoActions();
   const [loading, setLoading] = useState(true);
@@ -23,15 +23,20 @@ export default function TodoLayout({
   }, [fetchInitialData]);
 
   useEffect(() => {
+    // If session is still loading, don't redirect
+    if (isPending) {
+      return;
+    }
+
     if (!session) {
       router.push("/login");
       return;
     }
 
     handleFetchInitialData(session.user.id);
-  }, [session, router, handleFetchInitialData]);
+  }, [session, isPending, router, handleFetchInitialData]);
 
-  if (loading) return <Loading />;
+  if (loading || isPending) return <Loading />;
 
   return (
     <div className="min-h-screen max-h-screen flex dark:bg-zinc-800 overflow-hidden">
