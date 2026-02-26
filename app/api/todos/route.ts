@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from '@/lib/prisma'
+import { randomUUID } from 'crypto';
 
 // 获取所有待办事项
 export async function GET() {
@@ -12,7 +13,7 @@ export async function GET() {
   if (!session?.user) return;
 
   try {
-    const todos = await prisma.todo.findMany({
+    const todos = await prisma.todoTask.findMany({
       orderBy: {
         createdAt: 'desc',
       },
@@ -36,15 +37,13 @@ export async function POST(request: NextRequest) {
   if (!session?.user) return;
 
   try {
-    const { title, description, dueDate, priority, categoryIds } = await request.json();
+    const { content } = await request.json();
 
-    const todo = await prisma.todo.create({
+    const todo = await prisma.todoTask.create({
       data: {
-        title,
-        description,
-        dueDate: dueDate ? new Date(dueDate) : null,
-        priority,
-        userId: session.user.id, // 从session中获取userId
+        id: randomUUID(),
+        content,
+        userId: session.user.id,
       }
     });
 

@@ -3,11 +3,10 @@
 import prisma from "@/lib/prisma";
 
 export interface Substep {
-  id: number;
+  id: string;
   content: string;
   isFinish: boolean;
-  order: number;
-  todoItemId: number;
+  taskId: string;
 }
 
 export interface Response {
@@ -19,18 +18,17 @@ export interface Response {
 export interface SubstepInput {
   content: string;
   isFinish: boolean;
-  order: number;
-  todoItemId: number;
+  taskId: string;
 }
 
 export async function createSubstep(userId: string, input: SubstepInput): Promise<Response> {
   try {
-    const substep = await prisma.todoSubstep.create({
+    const substep = await prisma.todoTaskStep.create({
       data: {
+        id: crypto.randomUUID(),
         content: input.content,
         isFinish: input.isFinish || false,
-        order: input.order,
-        todoItemId: input.todoItemId,
+        taskId: input.taskId,
         userId: userId,
       },
     });
@@ -45,14 +43,11 @@ export async function createSubstep(userId: string, input: SubstepInput): Promis
   }
 }
 
-export async function getAllSubsteps(todoItemId: number): Promise<Response> {
+export async function getAllSubsteps(taskId: string): Promise<Response> {
   try {
-    const substeps = await prisma.todoSubstep.findMany({
+    const substeps = await prisma.todoTaskStep.findMany({
       where: {
-        todoItemId,
-      },
-      orderBy: {
-        order: 'asc',
+        taskId,
       },
     });
 
@@ -66,17 +61,16 @@ export async function getAllSubsteps(todoItemId: number): Promise<Response> {
   }
 }
 
-export async function updateSubstep(substepId: number, input: SubstepInput): Promise<Response> {
+export async function updateSubstep(substepId: string, input: SubstepInput): Promise<Response> {
   try {
-    const substep = await prisma.todoSubstep.update({
+    const substep = await prisma.todoTaskStep.update({
       where: {
         id: substepId,
       },
       data: {
         content: input.content,
         isFinish: input.isFinish,
-        order: input.order,
-        todoItemId: input.todoItemId,
+        taskId: input.taskId,
       },
     });
 
@@ -90,9 +84,9 @@ export async function updateSubstep(substepId: number, input: SubstepInput): Pro
   }
 }
 
-export async function deleteSubstep(substepId: number): Promise<Response> {
+export async function deleteSubstep(substepId: string): Promise<Response> {
   try {
-    await prisma.todoSubstep.delete({
+    await prisma.todoTaskStep.delete({
       where: {
         id: substepId,
       },
