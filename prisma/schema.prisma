@@ -79,7 +79,7 @@ model Verification {
 
 // Todo app
 model TodoTask {
-  id          String        @id
+  id          String         @id
   content     String
   isFinish    Boolean        @default(false)
   isImportant Boolean        @default(false)
@@ -93,7 +93,7 @@ model TodoTask {
   user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   substeps    TodoTaskStep[]
 
-  @@map("tasks")
+  @@map("todoTask")
 }
 
 // substep
@@ -108,7 +108,7 @@ model TodoTaskStep {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("taskSubstep")
+  @@map("todoTaskStep")
 }
 
 // customed todo sets
@@ -123,5 +123,5 @@ model TodoSet {
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   tasks     TodoTask[]
 
-  @@map("set")
+  @@map("todoSet")
 }
