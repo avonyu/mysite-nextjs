@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useTodoActions } from "@/store/todo-app";
+import { TodoProvider } from "@/contexts/todo-context";
 import Loading from "../components/loading";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 
-export default function TodoLayout({
+function TodoLayoutContent({
   children,
 }: {
   children: React.ReactNode;
@@ -45,6 +46,18 @@ export default function TodoLayout({
         {children}
       </Suspense>
     </div>
+  );
+}
+
+export default function TodoLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <TodoProvider>
+      <TodoLayoutContent>{children}</TodoLayoutContent>
+    </TodoProvider>
   );
 }
 

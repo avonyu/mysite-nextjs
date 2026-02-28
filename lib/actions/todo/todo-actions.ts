@@ -1,12 +1,15 @@
 "use server"
 
 import prisma from "@/lib/prisma";
-import { Response } from '../types'
+import { ActionResponse } from '../types'
 import { type TodoTask, Prisma } from "@/generated/prisma/client"
 
-export async function createTodoTask(userId: string | undefined, formData: FormData): Promise<Response<TodoTask>> {
+export async function createTodoTask(userId: string | undefined, formData: FormData): Promise<ActionResponse<TodoTask>> {
+  if (!userId) {
+    return { success: false, message: "userId is undefined.", data: null };
+  }
+
   try {
-    if (!userId) throw new Error("userId is undefined.")
     const rawFormData = Object.fromEntries(formData)
 
     const todoItem = await prisma.todoTask.create({
@@ -18,16 +21,20 @@ export async function createTodoTask(userId: string | undefined, formData: FormD
     });
 
     return {
+      success: true,
       message: 'Todo item created successfully',
-      code: 200,
-      data: [todoItem],
+      data: todoItem,
     };
   } catch (error) {
-    throw new Error(`Failed to create todo item: ${error}`);
+    return {
+      success: false,
+      message: `Failed to create todo item: ${error}`,
+      data: null,
+    };
   }
 }
 
-export async function getAllTodoTasks(userId: string): Promise<Response<TodoTask>> {
+export async function getAllTodoTasks(userId: string): Promise<ActionResponse<TodoTask[]>> {
   try {
     const todoItems = await prisma.todoTask.findMany({
       where: {
@@ -40,19 +47,25 @@ export async function getAllTodoTasks(userId: string): Promise<Response<TodoTask
     });
 
     return {
+      success: true,
       message: 'Todo items fetched successfully',
-      code: 200,
       data: todoItems,
     };
   } catch (error) {
-    throw new Error(`Failed to fetch todo items: ${error}`);
+    return {
+      success: false,
+      message: `Failed to fetch todo items: ${error}`,
+      data: null,
+    };
   }
 }
 
-export async function getTodoTasksBySetId(userId: string | undefined, todoSetId?: string): Promise<Response<TodoTask>> {
-  try {
-    if (!userId) throw new Error("userId is undefined.")
+export async function getTodoTasksBySetId(userId: string | undefined, todoSetId?: string): Promise<ActionResponse<TodoTask[]>> {
+  if (!userId) {
+    return { success: false, message: "userId is undefined.", data: null };
+  }
 
+  try {
     const where: Prisma.TodoTaskWhereInput = {
       userId,
     };
@@ -78,16 +91,20 @@ export async function getTodoTasksBySetId(userId: string | undefined, todoSetId?
     });
 
     return {
+      success: true,
       message: 'Todo items fetched successfully',
-      code: 200,
       data: todoItems,
     };
   } catch (error) {
-    throw new Error(`Failed to fetch todo items: ${error}`);
+    return {
+      success: false,
+      message: `Failed to fetch todo items: ${error}`,
+      data: null,
+    };
   }
 }
 
-export async function changeTodoTask(todoId: string, input: Partial<Omit<TodoTask, "id">>): Promise<Response<TodoTask>> {
+export async function changeTodoTask(todoId: string, input: Partial<Omit<TodoTask, "id">>): Promise<ActionResponse<TodoTask>> {
   try {
     const todoItem = await prisma.todoTask.update({
       where: {
@@ -99,16 +116,20 @@ export async function changeTodoTask(todoId: string, input: Partial<Omit<TodoTas
     });
 
     return {
+      success: true,
       message: 'Todo item updated successfully',
-      code: 200,
-      data: [todoItem],
+      data: todoItem,
     };
   } catch (error) {
-    throw new Error(`Failed to update todo item: ${error}`);
+    return {
+      success: false,
+      message: `Failed to update todo item: ${error}`,
+      data: null,
+    };
   }
 }
 
-export async function deleteTodoTask(todoId: string): Promise<Response<TodoTask>> {
+export async function deleteTodoTask(todoId: string): Promise<ActionResponse<TodoTask>> {
   try {
     const deletedTodoItem = await prisma.todoTask.delete({
       where: {
@@ -117,11 +138,15 @@ export async function deleteTodoTask(todoId: string): Promise<Response<TodoTask>
     });
 
     return {
+      success: true,
       message: 'Todo item deleted successfully',
-      code: 200,
-      data: [deletedTodoItem],
+      data: deletedTodoItem,
     };
   } catch (error) {
-    throw new Error(`Failed to delete todo item: ${error}`);
+    return {
+      success: false,
+      message: `Failed to delete todo item: ${error}`,
+      data: null,
+    };
   }
 }

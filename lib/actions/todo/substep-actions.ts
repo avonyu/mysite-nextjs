@@ -1,6 +1,7 @@
 "use server"
 
 import prisma from "@/lib/prisma";
+import { ActionResponse } from "../types";
 
 export interface Substep {
   id: string;
@@ -9,19 +10,13 @@ export interface Substep {
   taskId: string;
 }
 
-export interface Response {
-  message: string;
-  code: number; // 200: success, 400: bad request, 500: internal server error
-  data: Substep[] | null;
-}
-
 export interface SubstepInput {
   content: string;
   isFinish: boolean;
   taskId: string;
 }
 
-export async function createSubstep(userId: string, input: SubstepInput): Promise<Response> {
+export async function createSubstep(userId: string, input: SubstepInput): Promise<ActionResponse<Substep>> {
   try {
     const substep = await prisma.todoTaskStep.create({
       data: {
@@ -34,16 +29,20 @@ export async function createSubstep(userId: string, input: SubstepInput): Promis
     });
 
     return {
+      success: true,
       message: 'Substep created successfully',
-      code: 200,
-      data: [substep],
+      data: substep,
     };
   } catch (error) {
-    throw new Error(`Failed to create substep: ${error}`);
+    return {
+      success: false,
+      message: `Failed to create substep: ${error}`,
+      data: null,
+    };
   }
 }
 
-export async function getAllSubsteps(taskId: string): Promise<Response> {
+export async function getAllSubsteps(taskId: string): Promise<ActionResponse<Substep[]>> {
   try {
     const substeps = await prisma.todoTaskStep.findMany({
       where: {
@@ -52,16 +51,20 @@ export async function getAllSubsteps(taskId: string): Promise<Response> {
     });
 
     return {
+      success: true,
       message: 'Substeps fetched successfully',
-      code: 200,
       data: substeps,
     };
   } catch (error) {
-    throw new Error(`Failed to fetch substeps: ${error}`);
+    return {
+      success: false,
+      message: `Failed to fetch substeps: ${error}`,
+      data: null,
+    };
   }
 }
 
-export async function updateSubstep(substepId: string, input: SubstepInput): Promise<Response> {
+export async function updateSubstep(substepId: string, input: SubstepInput): Promise<ActionResponse<Substep>> {
   try {
     const substep = await prisma.todoTaskStep.update({
       where: {
@@ -75,29 +78,37 @@ export async function updateSubstep(substepId: string, input: SubstepInput): Pro
     });
 
     return {
+      success: true,
       message: 'Substep updated successfully',
-      code: 200,
-      data: [substep],
+      data: substep,
     };
   } catch (error) {
-    throw new Error(`Failed to update substep: ${error}`);
+    return {
+      success: false,
+      message: `Failed to update substep: ${error}`,
+      data: null,
+    };
   }
 }
 
-export async function deleteSubstep(substepId: string): Promise<Response> {
+export async function deleteSubstep(substepId: string): Promise<ActionResponse<Substep>> {
   try {
-    await prisma.todoTaskStep.delete({
+    const deletedSubstep = await prisma.todoTaskStep.delete({
       where: {
         id: substepId,
       },
     });
 
     return {
+      success: true,
       message: 'Substep deleted successfully',
-      code: 200,
-      data: null,
+      data: deletedSubstep,
     };
   } catch (error) {
-    throw new Error(`Failed to delete substep: ${error}`);
+    return {
+      success: false,
+      message: `Failed to delete substep: ${error}`,
+      data: null,
+    };
   }
 }

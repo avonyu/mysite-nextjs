@@ -71,8 +71,8 @@ export const useTodoAppStore = create<TodoAppStore>()(
               getAllTodoSets(userId)
             ])
 
-            const newTasks = tasksRes.code === 200 && tasksRes.data ? tasksRes.data : []
-            const newSets = setsRes.code === 200 && setsRes.data ? setsRes.data : []
+            const newTasks = tasksRes.success && tasksRes.data ? tasksRes.data : []
+            const newSets = setsRes.success && setsRes.data ? setsRes.data : []
 
             set({ tasks: newTasks, sets: newSets, isLoading: false }, false, 'fetchInitialData/success')
           } catch (error) {

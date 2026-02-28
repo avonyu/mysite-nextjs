@@ -2,9 +2,9 @@
 
 import prisma from "@/lib/prisma";
 import { type TodoSet } from "@/generated/prisma/client";
-import { Response } from "../types";
+import { ActionResponse } from "../types";
 
-export async function createTodoSet(userId: string, name: string): Promise<Response<TodoSet>> {
+export async function createTodoSet(userId: string, name: string): Promise<ActionResponse<TodoSet>> {
   try {
     const todoSet = await prisma.todoSet.create({
       data: {
@@ -15,16 +15,20 @@ export async function createTodoSet(userId: string, name: string): Promise<Respo
     });
 
     return {
+      success: true,
       message: 'Todo set created successfully',
-      code: 200,
-      data: [todoSet],
+      data: todoSet,
     };
   } catch (error) {
-    throw new Error(`Failed to create todo set: ${error}`);
+    return {
+      success: false,
+      message: `Failed to create todo set: ${error}`,
+      data: null,
+    };
   }
 }
 
-export async function getAllTodoSets(userId: string): Promise<Response<TodoSet>> {
+export async function getAllTodoSets(userId: string): Promise<ActionResponse<TodoSet[]>> {
   try {
     const todoSets = await prisma.todoSet.findMany({
       where: {
@@ -33,11 +37,15 @@ export async function getAllTodoSets(userId: string): Promise<Response<TodoSet>>
     });
 
     return {
+      success: true,
       message: 'Todo sets fetched successfully',
-      code: 200,
       data: todoSets,
     };
   } catch (error) {
-    throw new Error(`Failed to fetch todo sets: ${error}`);
+    return {
+      success: false,
+      message: `Failed to fetch todo sets: ${error}`,
+      data: null,
+    };
   }
 }
