@@ -16,7 +16,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "strictNullChecks": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
