@@ -42,8 +42,8 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     try {
       const result = await updateProfile({ name: editName });
 
-      if (result.success && result.user) {
-        setUpdatedUser(result.user);
+      if (result.success && result.data) {
+        setUpdatedUser(result.data);
         setMessage({ type: "success", text: result.message });
         setIsEditing(false);
       } else {

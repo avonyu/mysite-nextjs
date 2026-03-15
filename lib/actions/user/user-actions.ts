@@ -1,9 +1,10 @@
-"use server";
+"use server"
 
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { ActionResponse } from "../types";
 
 export interface UserProfile {
   id: string;
@@ -79,7 +80,7 @@ export interface UpdateProfileInput {
   image?: string;
 }
 
-export async function updateProfile(data: UpdateProfileInput): Promise<{ success: boolean; message: string; user?: UserProfile }> {
+export async function updateProfile(data: UpdateProfileInput): Promise<ActionResponse<UserProfile>> {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -111,12 +112,13 @@ export async function updateProfile(data: UpdateProfileInput): Promise<{ success
     return {
       success: true,
       message: "Profile updated successfully",
-      user: updatedUser,
+      data: updatedUser,
     };
   } catch (error) {
     return {
       success: false,
       message: `Failed to update profile: ${error}`,
+      data: null,
     };
   }
 }

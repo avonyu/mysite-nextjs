@@ -56,7 +56,7 @@ export default function RegisterPage() {
 
       // 注册成功后跳转到登录页
       router.push("/login");
-    } catch (error: any) {
+    } catch (error) {
       console.error("注册失败:", error);
       // TODO: 显示错误信息给用户
     }
