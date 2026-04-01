@@ -1,16 +1,8 @@
 import { cn } from "@/lib/utils";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import UserAvatar from "@/components/user-avatar";
 
-export default async function Header() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+export default function Header() {
   return (
     <header
       className={cn(
@@ -29,18 +21,6 @@ export default async function Header() {
       </Link>
       <div className="flex gap-2 items-center">
         <ThemeToggle />
-        {session ? (
-          <UserAvatar />
-        ) : (
-          <>
-            <Button variant="secondary" className="cursor-pointer" asChild>
-              <Link href="/login">Sign In</Link>
-            </Button>
-            <Button className="cursor-pointer" asChild>
-              <Link href="/register">Sign Up</Link>
-            </Button>
-          </>
-        )}
       </div>
     </header>
   );
