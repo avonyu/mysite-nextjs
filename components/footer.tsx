@@ -1,46 +1,24 @@
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 
-export default function Footer() {
+export default async function Footer() {
+  const t = await getTranslations("Footer");
+  const year = new Date().getFullYear();
+
   return (
-    <footer
-      className={cn(
-        "bottom-0 w-full bg-gray-100 border-t border-gray-200",
-        "dark:bg-gray-900 dark:border-gray-800"
-      )}
-    >
+    <footer className="relative z-10 w-full border-t border-border/10 bg-background/60 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
-          <div className={cn("text-sm text-gray-600", "dark:text-gray-400")}>
-            © {new Date().getFullYear()} Avon. All rights reserved.
+          <div className="text-sm text-muted-foreground">
+            {t("copyright", { year })}
           </div>
           <div className="flex gap-4">
             <Link
               href="/about"
-              className={cn(
-                "text-sm text-gray-600 hover:text-gray-900",
-                "dark:text-gray-400 dark:hover:text-gray-100"
-              )}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              About
-            </Link>
-            <Link
-              href="/privacy"
-              className={cn(
-                "text-sm text-gray-600 hover:text-gray-900",
-                "dark:text-gray-400 dark:hover:text-gray-100"
-              )}
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/terms"
-              className={cn(
-                "text-sm text-gray-600 hover:text-gray-900",
-                "dark:text-gray-400 dark:hover:text-gray-100"
-              )}
-            >
-              Terms of Service
+              {t("about")}
             </Link>
           </div>
         </div>

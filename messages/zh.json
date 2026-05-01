@@ -1,0 +1,33 @@
+{
+  "Nav": {
+    "projects": "项目",
+    "blog": "博客",
+    "theme": "切换主题",
+    "language": "EN"
+  },
+  "Hero": {
+    "greeting": "> hello, world",
+    "slogans": [
+      "创造有价值的数字体验",
+      "一行代码，一次提交，构建更好的 Web"
+    ],
+    "intro": "全栈工程师，专注于构建精美且实用的 Web 应用。热爱的技术栈包括 React、Next.js 与 Node.js 生态，追求代码质量与用户体验的完美平衡。"
+  },
+  "HeroButtons": {
+    "projects": "查看项目",
+    "blog": "阅读博客"
+  },
+  "Projects": {
+    "title": "精选项目"
+  },
+  "Blog": {
+    "title": "博客",
+    "comingSoon": "博客文章即将上线，敬请期待。"
+  },
+  "Footer": {
+    "about": "关于我",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "copyright": "© {year} Avon. All rights reserved."
+  }
+}

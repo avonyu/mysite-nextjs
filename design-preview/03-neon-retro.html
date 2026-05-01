@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design C — Neon Retro-Futuristic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Chakra+Petch:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0f;
+    --surface: rgba(16,16,24,0.8);
+    --text: #e0e0f0;
+    --text-muted: #6b6b8a;
+    --neon-cyan: #00f0ff;
+    --neon-pink: #ff2d95;
+    --neon-green: #39ff14;
+    --neon-yellow: #ffe600;
+    --border: rgba(0,240,255,0.15);
+    --font-display: 'Orbitron', sans-serif;
+    --font-tech: 'Chakra Petch', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-mono);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Glow effects */
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,240,255,0.12), transparent 70%);
+    top: 10%; left: -10%;
+  }
+  .glow-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,45,149,0.1), transparent 70%);
+    bottom: 10%; right: -5%;
+  }
+
+  /* Navbar */
+  .navbar {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    width: min(92%, 680px);
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 0 30px rgba(0,240,255,0.08),
+                inset 0 1px 0 rgba(0,240,255,0.1);
+  }
+  .nav-brand {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 20px rgba(0,240,255,0.5);
+  }
+
+  .nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-family: var(--font-tech);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+  .nav-links a::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 6px;
+    opacity: 0;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+    z-index: -1;
+    transition: opacity 0.25s ease;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0,240,255,0.4); }
+  .nav-links a:hover::before { opacity: 0.15; }
+
+  .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: var(--font-tech);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.4rem 0.75rem;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .nav-btn:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,240,255,0.2); }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 2rem 4rem;
+    text-align: center;
+  }
+
+  .hero-bracket {
+    font-family: var(--font-display);
+    font-size: 4rem;
+    color: var(--neon-pink);
+    opacity: 0.5;
+    line-height: 0;
+  }
+
+  .hero-slogan {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 1rem 0;
+    color: var(--text);
+    text-shadow: 0 0 80px rgba(0,240,255,0.3);
+  }
+  .hero-slogan .hl { color: var(--neon-cyan); text-shadow: 0 0 30px rgba(0,240,255,0.6); }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 3px;
+    height: 0.8em;
+    background: var(--neon-pink);
+    margin-left: 3px;
+    vertical-align: text-bottom;
+    box-shadow: 0 0 8px var(--neon-pink);
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .hero-status {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--neon-green);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 2rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(57,255,20,0.2);
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .hero-status::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--neon-green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--neon-green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero-terminal {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(0,240,255,0.2);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    max-width: 600px;
+    text-align: left;
+    box-shadow: 0 0 40px rgba(0,240,255,0.05);
+  }
+  .hero-terminal .line {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--text-muted);
+  }
+  .hero-terminal .prompt { color: var(--neon-green); }
+  .hero-terminal .comment { color: var(--text-muted); opacity: 0.5; }
+  .hero-terminal .key { color: var(--neon-cyan); }
+
+  .hero-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .btn-primary {
+    background: transparent;
+    border: 1.5px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    font-family: var(--font-tech);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--neon-cyan);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .btn-primary:hover { box-shadow: 0 0 30px rgba(0,240,255,0.4), inset 0 0 20px rgba(0,240,255,0.1); }
+  .btn-primary:hover::before { opacity: 0.1; }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+    padding: 0.75rem 2rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    font-family: var(--font-tech);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  .btn-ghost:hover { border-color: var(--neon-pink); color: var(--neon-pink); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%; transform: translateX(-50%);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  /* Projects */
+  .section {
+    position: relative; z-index: 1;
+    padding: 6rem 2rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .section-header {
+    display: flex; align-items: baseline; gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .section-num { font-family: var(--font-display); font-size: 1rem; color: var(--neon-pink); letter-spacing: 0.1em; }
+  .section-title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+  }
+  .project-card {
+    background: rgba(16,16,24,0.6);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,240,255,0.03), rgba(255,45,149,0.03));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .project-card:hover { border-color: rgba(0,240,255,0.2); transform: translateY(-3px); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+  .project-card:hover::after { opacity: 1; }
+  .project-card h3 {
+    font-family: var(--font-tech);
+    font-size: 1.1rem; font-weight: 600;
+    margin-bottom: 0.5rem; color: var(--text);
+    position: relative; z-index: 1;
+  }
+  .project-card p {
+    font-size: 0.8rem; color: var(--text-muted);
+    line-height: 1.6; position: relative; z-index: 1;
+  }
+  .project-card .number {
+    position: absolute; top: 1rem; right: 1.5rem;
+    font-family: var(--font-display); font-size: 3rem;
+    color: rgba(255,255,255,0.03); font-weight: 900;
+  }
+
+  .footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 3rem 2rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    font-family: var(--font-mono); font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 640px) {
+    .navbar { top: 0.5rem; width: 96%; padding: 0.6rem 1rem; border-radius: 8px; }
+    .nav-links { gap: 0.75rem; }
+    .nav-links a { font-size: 0.65rem; padding: 0.3rem 0.5rem; }
+    .project-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb glow-1"></div>
+<div class="glow-orb glow-2"></div>
+
+<nav class="navbar">
+  <div class="nav-brand">Avon</div>
+  <ul class="nav-links">
+    <li><a href="#projects" class="active">// Projects</a></li>
+    <li><a href="/blog">// Blog</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="nav-btn">◑ Theme</button>
+    <button class="nav-btn">EN 中文</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-status">SYSTEM ONLINE</div>
+  <h1 class="hero-slogan">
+    <span class="hl">&lt;</span><span id="typewriter"></span><span class="typing-cursor"></span><span class="hl"> /&gt;</span>
+  </h1>
+  <div class="hero-terminal">
+    <div class="line"><span class="prompt">$</span> whoami</div>
+    <div class="line" style="color:var(--text)">avon — full-stack developer</div>
+    <div class="line" style="margin-top:0.5rem"><span class="prompt">$</span> cat about.txt</div>
+    <div class="line" style="color:var(--text)">全栈工程师，热爱代码美学与产品思维。<span class="comment"># React · Next.js · Node.js · Python</span></div>
+    <div class="line" style="margin-top:0.5rem"><span class="prompt">$</span> <span class="key">_</span></div>
+  </div>
+  <div class="hero-buttons">
+    <a href="#projects" class="btn-primary"><span>▶ Run Projects</span></a>
+    <a href="/blog" class="btn-ghost">Read Blog</a>
+  </div>
+  <div class="scroll-hint">↓ SCROLL TO EXPLORE ↓</div>
+</section>
+
+<section class="section" id="projects">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Projects</h2>
+  </div>
+  <div class="project-grid">
+    <div class="project-card">
+      <span class="number">01</span>
+      <h3>Microsoft Todo 复刻</h3>
+      <p>Next.js 全栈应用 · 拖拽排序 · 标签分类 · 深色模式 · Prisma ORM</p>
+    </div>
+    <div class="project-card">
+      <span class="number">02</span>
+      <h3>AI Code Reviewer</h3>
+      <p>基于 LLM 的自动化代码审查 · Python · OpenAI API · GitHub Webhook</p>
+    </div>
+    <div class="project-card">
+      <span class="number">03</span>
+      <h3>Blog System</h3>
+      <p>Markdown 驱动 · RSS 订阅 · 全文搜索 · 暗色模式 · MDX 组件</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>© 2026 AVON // BUILT WITH CODE & CAFFEINE</p>
+</footer>
+
+<script>
+(function() {
+  const el = document.getElementById('typewriter');
+  const texts = ['BUIDL', 'CREATE', 'SHIP', 'ITERATE', 'INNOVATE'];
+  let textIndex = 0, charIndex = 0, isDeleting = false;
+  const typeSpeed = 100, deleteSpeed = 40, pauseTime = 2000;
+
+  function type() {
+    const current = texts[textIndex];
+    if (!isDeleting) {
+      el.textContent = current.substring(0, charIndex + 1);
+      charIndex++;
+      if (charIndex === current.length) {
+        isDeleting = true;
+        setTimeout(type, pauseTime);
+        return;
+      }
+      setTimeout(type, typeSpeed + Math.random() * 60);
+    } else {
+      el.textContent = current.substring(0, charIndex - 1);
+      charIndex--;
+      if (charIndex === 0) {
+        isDeleting = false;
+        textIndex = (textIndex + 1) % texts.length;
+        setTimeout(type, 200);
+        return;
+      }
+      setTimeout(type, deleteSpeed);
+    }
+  }
+  setTimeout(type, 1200);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,454 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design D — Organic Warm Natural</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&family=Quicksand:wght@300..700&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #faf7f2;
+    --warm-white: #fefcf8;
+    --sand: #e8d5c4;
+    --clay: #c17a5c;
+    --terracotta: #d4755e;
+    --ink: #2d241b;
+    --ink-muted: #8b7358;
+    --sage: #8b9d83;
+    --gold: #c9a051;
+    --border: rgba(141, 115, 88, 0.15);
+    --radius: 1.25rem;
+    --radius-sm: 0.75rem;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Quicksand', system-ui, sans-serif;
+    --font-hand: 'Caveat', cursive;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.7;
+  }
+
+  /* Grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.03;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  /* Floating organic shapes */
+  .organic-shape {
+    position: fixed;
+    border-radius: 60% 40% 50% 50% / 55% 45% 55% 45%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+  }
+  .shape-1 {
+    width: 500px; height: 500px;
+    background: var(--terracotta);
+    top: -100px; right: -100px;
+    animation: morph1 15s ease-in-out infinite;
+  }
+  .shape-2 {
+    width: 400px; height: 400px;
+    background: var(--sage);
+    bottom: -80px; left: -80px;
+    animation: morph2 18s ease-in-out infinite;
+  }
+  .shape-3 {
+    width: 350px; height: 350px;
+    background: var(--gold);
+    top: 40%; left: 50%;
+    animation: morph3 20s ease-in-out infinite;
+  }
+
+  @keyframes morph1 {
+    0%, 100% { border-radius: 60% 40% 50% 50% / 55% 45% 55% 45%; transform: translate(0,0) rotate(0deg); }
+    50% { border-radius: 40% 60% 45% 55% / 45% 55% 45% 55%; transform: translate(-30px, 20px) rotate(10deg); }
+  }
+  @keyframes morph2 {
+    0%, 100% { border-radius: 55% 45% 60% 40% / 50% 50% 60% 40%; transform: translate(0,0); }
+    33% { border-radius: 45% 55% 50% 50% / 60% 40% 50% 50%; transform: translate(20px, -30px); }
+    66% { border-radius: 50% 50% 55% 45% / 45% 55% 45% 55%; transform: translate(-10px, 20px); }
+  }
+  @keyframes morph3 {
+    0%, 100% { border-radius: 50% 50% 55% 45% / 45% 55% 45% 55%; transform: scale(1) rotate(0deg); }
+    50% { border-radius: 60% 40% 50% 50% / 55% 45% 55% 45%; transform: scale(1.15) rotate(-5deg); }
+  }
+
+  /* Navbar */
+  .navbar {
+    position: fixed;
+    top: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    width: min(92%, 640px);
+    background: rgba(254,252,248,0.7);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.65rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 40px -12px rgba(45,36,27,0.08);
+    transition: all 0.3s ease;
+  }
+
+  .nav-brand {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--clay);
+    padding-left: 0.75rem;
+  }
+
+  .nav-links { display: flex; align-items: center; gap: 0.25rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    transition: all 0.25s ease;
+  }
+  .nav-links a:hover { color: var(--ink); background: rgba(193,122,92,0.08); }
+  .nav-links a.active { color: var(--clay); background: rgba(193,122,92,0.12); font-weight: 600; }
+
+  .nav-actions { display: flex; align-items: center; gap: 0.5rem; padding-right: 0.5rem; }
+  .nav-btn {
+    background: transparent;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s ease;
+  }
+  .nav-btn:hover { color: var(--clay); background: rgba(193,122,92,0.08); }
+  .nav-btn.lang { width: auto; padding: 0.4rem 0.8rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 2rem 4rem;
+    text-align: center;
+  }
+
+  .hero-handwritten {
+    font-family: var(--font-hand);
+    font-size: 1.8rem;
+    color: var(--terracotta);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.1s forwards;
+    transform: rotate(-2deg);
+  }
+
+  .hero-slogan {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.3s forwards;
+    max-width: 700px;
+  }
+  .hero-slogan .accent { color: var(--clay); font-style: italic; }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 3px;
+    height: 0.75em;
+    background: var(--terracotta);
+    margin-left: 3px;
+    vertical-align: baseline;
+    border-radius: 2px;
+    opacity: 0.8;
+    animation: blink 0.9s step-end infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .hero-card {
+    background: rgba(254,252,248,0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 2.5rem;
+    max-width: 560px;
+    margin-top: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.5s forwards;
+    box-shadow: 0 4px 30px -8px rgba(45,36,27,0.05);
+  }
+  .hero-card p {
+    font-size: 1.05rem;
+    color: var(--ink-muted);
+    line-height: 1.8;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.7s forwards;
+  }
+
+  .btn-primary {
+    background: var(--clay);
+    color: white;
+    padding: 0.85rem 2rem;
+    font-weight: 600;
+    font-size: 0.925rem;
+    text-decoration: none;
+    font-family: var(--font-body);
+    cursor: pointer;
+    border: none;
+    border-radius: 999px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px -4px rgba(193,122,92,0.35);
+  }
+  .btn-primary:hover { background: var(--terracotta); transform: translateY(-2px); box-shadow: 0 8px 28px -4px rgba(193,122,92,0.4); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--ink);
+    padding: 0.85rem 2rem;
+    font-weight: 500;
+    font-size: 0.925rem;
+    text-decoration: none;
+    font-family: var(--font-body);
+    cursor: pointer;
+    border-radius: 999px;
+    transition: all 0.3s ease;
+  }
+  .btn-ghost:hover { border-color: var(--clay); color: var(--clay); }
+
+  /* Projects */
+  .section {
+    position: relative; z-index: 1;
+    padding: 5rem 2rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 2.5rem;
+    color: var(--ink);
+  }
+  .section-title .hand {
+    font-family: var(--font-hand);
+    font-size: 1.4rem;
+    color: var(--terracotta);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+  .project-card {
+    background: rgba(254,252,248,0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--terracotta), var(--gold), var(--sage));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .project-card:hover { transform: translateY(-4px);
+    box-shadow: 0 12px 40px -12px rgba(45,36,27,0.1);
+    border-color: rgba(193,122,92,0.2);
+  }
+  .project-card:hover::before { transform: scaleX(1); }
+  .project-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem; font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .project-card p {
+    font-size: 0.9rem; color: var(--ink-muted);
+    line-height: 1.65;
+  }
+  .project-card .tags { display: flex; gap: 0.5rem; margin-top: 1.25rem; flex-wrap: wrap; }
+  .project-card .tag {
+    font-size: 0.72rem; padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(193,122,92,0.08); color: var(--clay);
+    font-weight: 500;
+  }
+
+  .footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--ink-muted); font-size: 0.85rem;
+  }
+  .footer span { font-family: var(--font-hand); font-size: 1.2rem; color: var(--terracotta); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 640px) {
+    .navbar { top: 0.75rem; width: 95%; padding: 0.55rem 0.5rem; }
+    .nav-links a { font-size: 0.8rem; padding: 0.4rem 0.75rem; }
+    .project-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="organic-shape shape-1"></div>
+<div class="organic-shape shape-2"></div>
+<div class="organic-shape shape-3"></div>
+
+<nav class="navbar">
+  <div class="nav-brand">Avon</div>
+  <ul class="nav-links">
+    <li><a href="#projects" class="active">项目</a></li>
+    <li><a href="/blog">博客</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="nav-btn">☀</button>
+    <button class="nav-btn lang">EN</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-handwritten">Hello, 你好呀 ~</div>
+  <h1 class="hero-slogan">
+    I build things for<br><span class="accent" id="typewriter"></span><span class="typing-cursor"></span>
+  </h1>
+  <div class="hero-card">
+    <p>全栈工程师，着迷于将代码转化为有温度的产品。每一个像素、每一行逻辑，都是对「好用」二字的追求。目前专注于 React、Next.js 和 Node.js 生态系统。</p>
+  </div>
+  <div class="hero-buttons">
+    <a href="#projects" class="btn-primary">看看项目</a>
+    <a href="/blog" class="btn-ghost">读读博客</a>
+  </div>
+</section>
+
+<section class="section" id="projects">
+  <h2 class="section-title">
+    <span class="hand">some things I've built</span>
+    精选项目
+  </h2>
+  <div class="project-grid">
+    <div class="project-card">
+      <h3>Microsoft Todo 复刻</h3>
+      <p>Next.js 全栈应用，支持拖拽排序、标签分类与深色模式</p>
+      <div class="tags">
+        <span class="tag">Next.js</span><span class="tag">Prisma</span><span class="tag">TypeScript</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <h3>AI 代码审查工具</h3>
+      <p>基于 LLM 的自动化 PR 分析，提升团队代码质量</p>
+      <div class="tags">
+        <span class="tag">Python</span><span class="tag">OpenAI</span><span class="tag">GitHub API</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <h3>个人博客系统</h3>
+      <p>Markdown 驱动，支持 RSS、全文搜索与暗色模式</p>
+      <div class="tags">
+        <span class="tag">Astro</span><span class="tag">MDX</span><span class="tag">Tailwind</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>© 2026 Avon · <span>Made with love</span></p>
+</footer>
+
+<script>
+(function() {
+  const el = document.getElementById('typewriter');
+  const texts = ['people', 'beauty', 'tomorrow', 'the web'];
+  let textIndex = 0, charIndex = 0, isDeleting = false;
+  const typeSpeed = 90, deleteSpeed = 35, pauseTime = 2800;
+
+  function type() {
+    const current = texts[textIndex];
+    if (!isDeleting) {
+      el.textContent = current.substring(0, charIndex + 1);
+      charIndex++;
+      if (charIndex === current.length) {
+        isDeleting = true;
+        setTimeout(type, pauseTime);
+        return;
+      }
+      setTimeout(type, typeSpeed + Math.random() * 50);
+    } else {
+      el.textContent = current.substring(0, charIndex - 1);
+      charIndex--;
+      if (charIndex === 0) {
+        isDeleting = false;
+        textIndex = (textIndex + 1) % texts.length;
+        setTimeout(type, 350);
+        return;
+      }
+      setTimeout(type, deleteSpeed);
+    }
+  }
+  setTimeout(type, 1200);
+})();
+</script>
+</body>
+</html>

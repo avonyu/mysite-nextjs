@@ -1,0 +1,33 @@
+{
+  "Nav": {
+    "projects": "Projects",
+    "blog": "Blog",
+    "theme": "Toggle theme",
+    "language": "中文"
+  },
+  "Hero": {
+    "greeting": "> hello, world",
+    "slogans": [
+      "Creating digital experiences that matter",
+      "Building the web, one commit at a time"
+    ],
+    "intro": "A full-stack engineer passionate about building beautiful and practical web applications. Focused on React, Next.js, and the Node.js ecosystem."
+  },
+  "HeroButtons": {
+    "projects": "View Projects",
+    "blog": "Read Blog"
+  },
+  "Projects": {
+    "title": "Selected Projects"
+  },
+  "Blog": {
+    "title": "Blog",
+    "comingSoon": "Blog posts are on the way — stay tuned."
+  },
+  "Footer": {
+    "about": "About",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "copyright": "© {year} Avon. All rights reserved."
+  }
+}

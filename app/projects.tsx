@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getTranslations } from "next-intl/server";
 
 interface ProjectCardProps {
   title: string;
@@ -17,7 +18,7 @@ interface ProjectCardProps {
 function ProjectCard({ title, description, image, href }: ProjectCardProps) {
   return (
     <Link href={href} target="_blank" rel="noopener noreferrer">
-      <Card className="hover:shadow-lg transition-shadow overflow-hidden">
+      <Card className="hover:shadow-lg hover:border-blue-500/20 transition-all overflow-hidden relative z-10">
         {image && (
           <div className="relative w-full h-48">
             <Image src={image} alt={title} fill className="object-cover" />
@@ -32,7 +33,9 @@ function ProjectCard({ title, description, image, href }: ProjectCardProps) {
   );
 }
 
-export default function Projects() {
+export default async function Projects() {
+  const t = await getTranslations("Projects");
+
   const projects: ProjectCardProps[] = [
     {
       title: "Todo App",
@@ -42,11 +45,11 @@ export default function Projects() {
   ];
 
   return (
-    <div id="projects" className="flex flex-col items-center px-4 py-8">
+    <div id="projects" className="relative z-10 flex flex-col items-center px-4 py-16">
       <div className="max-w-4xl w-full space-y-8">
-        <h1 className="text-center text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          All My Projects
-        </h1>
+        <h2 className="text-center text-3xl font-extrabold tracking-tight mb-8">
+          {t("title")}
+        </h2>
 
         <div className="grid md:grid-cols-2 gap-6 mt-12">
           {projects.map((project) => (
