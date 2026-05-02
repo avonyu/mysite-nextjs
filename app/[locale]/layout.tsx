@@ -58,14 +58,9 @@ export default async function LocaleLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages} locale={locale}>
-            <div className="relative min-h-screen">
-              <div className="bg-orb bg-orb-1" />
-              <div className="bg-orb bg-orb-2" />
-              <div className="bg-orb bg-orb-3" />
-              <Header />
-              <main>{children}</main>
-              <Footer />
-            </div>
+            <Header />
+            <main>{children}</main>
+            <Footer />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

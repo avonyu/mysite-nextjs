@@ -7,7 +7,7 @@ export default async function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative z-10 w-full border-t border-border/10 bg-background/60 backdrop-blur-sm">
+    <footer className="relative w-full border-t border-border/10 bg-background/60 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <div className="text-sm text-muted-foreground">

@@ -2,11 +2,11 @@
   "Nav": {
     "projects": "Projects",
     "blog": "Blog",
+    "gallery": "Gallery",
     "theme": "Toggle theme",
     "language": "中文"
   },
   "Hero": {
-    "greeting": "> hello, world",
     "slogans": [
       "Creating digital experiences that matter",
       "Building the web, one commit at a time"
@@ -23,6 +23,11 @@
   "Blog": {
     "title": "Blog",
     "comingSoon": "Blog posts are on the way — stay tuned."
+  },
+  "Gallery": {
+    "title": "Gallery",
+    "description": "Moments captured through the lens.",
+    "comingSoon": "Photos are being developed — check back soon."
   },
   "Footer": {
     "about": "About",

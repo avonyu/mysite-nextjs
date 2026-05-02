@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { Button } from "@/components/ui/button";
 
 export function LocaleSwitcher() {
   const locale = useLocale();
@@ -18,13 +19,14 @@ export function LocaleSwitcher() {
   };
 
   return (
-    <button
+    <Button
       onClick={switchLocale}
       disabled={isPending}
-      className="inline-flex items-center justify-center text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors w-9 h-9 rounded-full hover:bg-foreground/5 disabled:opacity-50"
+      variant="ghost"
+      className="size-9 inline-flex items-center justify-center text-xs font-semibold text-muted-foreground"
       title={locale === "zh" ? "Switch to English" : "切换到中文"}
     >
       {locale === "zh" ? "EN" : "中文"}
-    </button>
+    </Button>
   );
 }
