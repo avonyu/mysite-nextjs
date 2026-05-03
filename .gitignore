@@ -72,6 +72,9 @@ pids
 # Yarn Integrity file
 .yarn-integrity
 
+# Gallery source images
+content/gallery
+
 # Database
 *.db
 
