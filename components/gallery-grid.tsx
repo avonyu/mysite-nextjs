@@ -8,6 +8,7 @@ import { Grid3X3, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { useGalleryStore } from "@/store";
 import type { GalleryPhoto } from "@/lib/gallery";
 
 // blurhash 解码缓存（module-level，避免重复解码）
@@ -57,34 +58,23 @@ function BlurImage({
   sizes: string;
 }) {
   const blurDataURL = useBlurDataURL(photo.blurhash);
-  const [loaded, setLoaded] = useState(false);
 
   if (!blurDataURL) {
     return <Skeleton className="size-full rounded-none" />;
   }
 
   return (
-    <div className="relative size-full">
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${blurDataURL})` }}
-      />
-      <Image
-        src={photo.src}
-        alt={photo.alt}
-        width={photo.width}
-        height={photo.height}
-        placeholder="empty"
-        quality={75}
-        sizes={sizes}
-        className={cn(
-          "relative size-full transition-opacity duration-500",
-          square ? "object-cover" : "object-contain",
-          loaded ? "opacity-100" : "opacity-0",
-        )}
-        onLoad={() => setLoaded(true)}
-      />
-    </div>
+    <Image
+      src={photo.src}
+      alt={photo.alt}
+      width={photo.width}
+      height={photo.height}
+      placeholder="blur"
+      blurDataURL={blurDataURL}
+      quality={75}
+      sizes={sizes}
+      className={cn("size-full", square ? "object-cover" : "object-contain")}
+    />
   );
 }
 
@@ -128,7 +118,7 @@ function formatExif(exif: Record<string, string | undefined>): string[] {
 }
 
 export function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
-  const [square, setSquare] = useState(true); // true: 正方形裁切, false: 原始比例
+  const { square, setSquare } = useGalleryStore();
   const [selected, setSelected] = useState<number | null>(null); // 当前大图索引
 
   // Escape 键关闭大图
@@ -173,7 +163,7 @@ export function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
         {photos.map((photo, i) => (
           <div
             key={photo.src}
-            className="aspect-square overflow-hidden cursor-pointer rounded-lg"
+            className="aspect-square overflow-hidden cursor-pointer"
             onClick={() => setSelected(i)}
           >
             <BlurImage
